@@ -1,0 +1,6 @@
+@Rovema.Api_HostAddress = http://localhost:5185
+
+GET {{Rovema.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

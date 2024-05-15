@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rovema.Api", "Rovema.Api\Rovema.Api.csproj", "{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rovema.Shared", "Rovema.Shared\Rovema.Shared.csproj", "{F600A6A7-BE90-41B7-AB47-95E5096B1E38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0CC0C556-8EF7-42EA-B58E-964DA12FE794}
+	EndGlobalSection
+EndGlobal
