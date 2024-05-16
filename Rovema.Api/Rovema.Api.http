@@ -1,6 +1,11 @@
-@Rovema.Api_HostAddress = http://localhost:5185
+@Rovema.Api_HostAddress = http://localhost:8101
 
-GET {{Rovema.Api_HostAddress}}/weatherforecast/
+GET {{Rovema.Api_HostAddress}}/rpas
 Accept: application/json
 
 ###
+
+GET {{Rovema.Api_HostAddress}}/rpas/Tempo
+Accept: application/json
+
+

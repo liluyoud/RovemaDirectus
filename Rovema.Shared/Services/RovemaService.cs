@@ -55,11 +55,9 @@ public class RovemaService
             var latitude = rpa.GetSetting("Latitude");
             var longitude = rpa.GetSetting("Longitude");
             var weather = await GetWeatherAsync(latitude, longitude);
-            var read = weather.GetRead();
+            var read = weather.GetRead(rpa.Id);
             if (read != null)
             {
-                read.RpaId = rpa.Id;
-                read.ReadAt = DateTime.UtcNow;
                 string readJson = JsonSerializer.Serialize(read);
                 await _cache.SetStringAsync("rpaWeather-" + rpa.Id.ToString(), readJson);
                 _logger.LogInformation("GetReadWeatherAsync executed");

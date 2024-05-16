@@ -4,11 +4,13 @@ namespace Rovema.Shared.Extensions;
 
 public static class OpenWeatherExtensions
 {
-    public static ReadWeatherModel? GetRead(this OpenWeatherModel? weather)
+    public static ReadWeatherModel? GetRead(this OpenWeatherModel? weather, int rpaId)
     {
         if (weather != null)
         {
             var read = new ReadWeatherModel();
+            read.RpaId = rpaId;
+            read.ReadAt = DateTime.UtcNow;
             read.WeatherId = weather.Weather![0].Id;
             if (weather.Weather != null && weather.Weather.Count > 0)
             {
