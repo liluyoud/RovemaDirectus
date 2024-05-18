@@ -2,7 +2,7 @@
 
 namespace Rovema.Coravel.Data;
 
-public static class DbExtensions
+public static class ContextExtensions
 {
     public static void ApplyMigrations(this IApplicationBuilder app)
     {

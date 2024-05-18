@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Rovema.Shared.Extensions;
+﻿using Dclt.Shared.Extensions;
+using Dclt.Shared.Services;
+using Microsoft.Extensions.Caching.Distributed;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
 
@@ -10,12 +11,15 @@ public static class Endpoints
 
     public static void MapRpaEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("weather", async (int id, string latitude, string longitude, 
-            RovemaService rovema, IDistributedCache cache, CancellationToken ct) => {
+        app.MapGet("weather", async (int id, string latitude, string longitude,
+            HttpServices services, IDistributedCache cache, CancellationToken ct) => {
 
             var weather = await cache.GetAsync($"weather-{id}", async token => {
-                var openWeather = await rovema.GetWeatherAsync(latitude, longitude);
-                return openWeather.GetRead(id);
+                var weather = await services.GetWeatherAsync(latitude, longitude);
+                // falta preencher o rpaid
+                //var readWeather = openWeather.ToWeather();
+                //await cache.SetObjectAsync("rpa-" + weather?.RpaId, weather);
+                return weather;
             }, CacheOptions.FiveMinutesExpiration, ct);
 
             return weather is null ? Results.NotFound() : Results.Ok(weather);
@@ -42,20 +46,5 @@ public static class Endpoints
             return rpas is null ? Results.NotFound() : Results.Ok(rpas);
 
         }).Produces<List<RpaModel>>();
-
-        //app.MapGet("rpas/readweather", async (
-        //    RovemaService rovema,
-        //    IDistributedCache cache,
-        //    CancellationToken ct) =>
-        //{
-        //    var weathers = await cache.GetAsync($"weathers",
-        //       async token =>
-        //       {
-        //           return await rovema.GetReadWeathersAsync();
-        //       },
-        //       CacheOptions.FiveMinutesExpiration,
-        //       ct);
-        //    return Results.Ok(weathers);
-        //}).Produces<List<ReadWeatherModel>>();
     }
 }

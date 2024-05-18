@@ -19,6 +19,9 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
                 if (latitude != null && longitude != null)
                 {
                     tasks.Add(rovema.GetWeatherAsync(rpa.Id, latitude, longitude));
+                } else
+                {
+                   logger.LogError($"{rpa.Name} não processado: Lat {latitude} - Lon {longitude}");
                 }
             }
             await Task.WhenAll(tasks);
