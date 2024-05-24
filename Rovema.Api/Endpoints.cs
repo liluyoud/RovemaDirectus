@@ -1,50 +1,54 @@
-﻿using Dclt.Shared.Extensions;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Dclt.Shared.Services;
-using Microsoft.Extensions.Caching.Distributed;
 using Rovema.Shared.Models;
-using Rovema.Shared.Services;
 
 namespace Rovema.Api;
 
 public static class Endpoints
 {
-
-    public static void MapRpaEndpoints(this IEndpointRouteBuilder app)
+    public static void MapRpasEndpoints(this IEndpointRouteBuilder app, string baseUrl, string accessToken)
     {
-        app.MapGet("weather", async (int id, string latitude, string longitude,
-            HttpServices services, IDistributedCache cache, CancellationToken ct) => {
+        app.MapGet("rpas", async () => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            var rpa = await directus.GetItemsAsync<IEnumerable<RpaModel>>("rpas");
+            return rpa is null ? Results.NotFound() : Results.Ok(rpa);
 
-            var weather = await cache.GetAsync($"weather-{id}", async token => {
-                var weather = await services.GetWeatherAsync(latitude, longitude);
-                // falta preencher o rpaid
-                //var readWeather = openWeather.ToWeather();
-                //await cache.SetObjectAsync("rpa-" + weather?.RpaId, weather);
-                return weather;
-            }, CacheOptions.FiveMinutesExpiration, ct);
+        }).Produces<IEnumerable<RpaModel>>();
 
-            return weather is null ? Results.NotFound() : Results.Ok(weather);
+        app.MapGet("rpas/{id}", async (long id) => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            var rpa = await directus.GetItemAsync<RpaModel>("rpas", id);
+            return rpa is null ? Results.NotFound() : Results.Ok(rpa);
 
-        }).Produces<ReadWeatherModel>();
+        }).Produces<RpaModel>();
 
-        app.MapGet("rpas", async (RovemaService rovema, IDistributedCache cache, CancellationToken ct) => {
+        app.MapPost("rpas", async (RpaModel item) => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            var rpa = await directus.CreateItemAsync("rpas", item);
+            return rpa is null ? Results.NoContent() : Results.Ok(rpa);
 
-            var rpas = await cache.GetAsync("rpas", async token => {
-                return await rovema.GetRpasAsync();
-            }, CacheOptions.FiveMinutesExpiration, ct);
+        }).Produces<RpaModel>();
 
-            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
+        app.MapPatch("rpas", async (long id, RpaModel item) => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            var rpa = await directus.UpdateItemAsync("rpas", id, item);
+            return rpa is null ? Results.NoContent() : Results.Ok(rpa);
 
-        }).Produces<List<RpaModel>>();
+        }).Produces<RpaModel>();
 
-        app.MapGet("rpas/{type}", async (string type, 
-            RovemaService rovema, IDistributedCache cache, CancellationToken ct) => {
-            
-                var rpas = await cache.GetAsync($"rpas{type}", async token => {
-                return await rovema.GetRpasAsync(type);
-            }, CacheOptions.FiveMinutesExpiration, ct);
+        app.MapDelete("rpas", async (long id) => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            return await directus.DeleteItemAsync("rpas", id);
+        }).Produces<bool>();
 
-            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
 
-        }).Produces<List<RpaModel>>();
+        app.MapGet("cached/{collection}/{id}", async (string collection, long id, IDistributedCache cache) => {
+            var directus = new DirectusClient(baseUrl, accessToken);
+            var rpa = await directus.GetCachedItemAsync<RpaModel>(collection, id, cache, 5);
+            return rpa is null ? Results.NotFound() : Results.Ok(rpa);
+
+        }).Produces<RpaModel>();
     }
+
+
 }

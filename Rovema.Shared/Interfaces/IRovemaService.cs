@@ -1,16 +1,18 @@
-﻿using Refit;
+﻿using Dclt.Shared.Models;
+using Refit;
 using Rovema.Shared.Models;
 
 namespace Rovema.Shared.Interfaces;
 
 public interface IRovemaService
 {
-    [Get("/weather")]
-    Task<ReadWeatherModel> GetWeatherAsync(int id, string latitude, string longitude);
+    [Get("/items/rpas")]
+    Task<ResponseModel<RpaModel>> GetRpasAsync();
+    //Task<ResponseModel<RpaModel>> GetRpasAsync(string access_token, string? fields, string? filter);
 
-    [Get("/rpas")]
-    Task<List<RpaModel>> GetRpasAsync();
+    [Get("/items/rpas/{id}")]
+    Task<ResponseModel<RpaModel>> GetRpaByIdAsync(long id, string access_token, string? fields);
 
-    [Get("/rpas/{type}")]
-    Task<List<RpaModel>> GetRpasAsync(string type);
+    [Post("/items/rpas")]
+    Task PostRpasAsync([Query] string access_token, [Body] IEnumerable<ReadWeatherModel> reads);
 }

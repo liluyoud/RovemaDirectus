@@ -1,8 +1,6 @@
 ﻿namespace Rovema.Shared.Models;
 
-public record RpaResponse(List<RpaModel>? Data);
-
-public record RpaModel(int Id, string Name, string Type, List<RpaSetting>? Settings)
+public record RpaModel(int? Id, string? Name, string? Type, List<RpaSetting>? Settings)
 {
     public string? GetSetting(string key)
     {
