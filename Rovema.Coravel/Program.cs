@@ -15,7 +15,7 @@ builder.Services.AddDbContext<CoravelContext>(options =>  options.UseSqlite(rove
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages().AddNewtonsoftJson(); 
 builder.Services.AddCoravelPro(typeof(CoravelContext));
-builder.Services.AddDcltServices(directusUrl!, accessToken!);
+builder.Services.AddDcltServices(builder.Configuration);
 
 var app = builder.Build();
 app.ApplyMigrations();
