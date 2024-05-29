@@ -1,16 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Rovema.Shared.Models;
+namespace Rovema.Shared.Contracts;
 
-public class ReadWeatherModel
+public class CreateReadWeather
 {
-    public long Id { get; set; }
-
     [JsonPropertyName("rpa_id")]
     public int RpaId { get; set; }
-
-    [JsonPropertyName("date_created")]
-    public DateTime ReadAt { get; set; }
 
     [JsonPropertyName("weather_id")]
     public int WeatherId { get; set; }

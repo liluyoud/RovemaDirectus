@@ -1,13 +1,12 @@
 using Coravel.Pro;
-using Dclt.Shared.Helpers;
+using Dclt.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Rovema.Coravel.Data;
+using Rovema.Shared.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // environment variables
-var directusUrl = Environment.GetEnvironmentVariable("DIRECTUS_URL") ?? builder.Configuration["Environment:DIRECTUS_URL"];
-var accessToken = Environment.GetEnvironmentVariable("DIRECTUS_TOKEN") ?? builder.Configuration["Environment:DIRECTUS_TOKEN"] ?? "";
 var rovemaSqlite = builder.Configuration["Environment:ROVEMA_SQLITE"];
 var rovemaApiUrl = builder.Configuration["Environment:ROVEMAAPI_URL"];
 
@@ -15,7 +14,7 @@ builder.Services.AddDbContext<CoravelContext>(options =>  options.UseSqlite(rove
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages().AddNewtonsoftJson(); 
 builder.Services.AddCoravelPro(typeof(CoravelContext));
-builder.Services.AddDcltServices(builder.Configuration);
+builder.Services.AddRefit<IRovemaService>(rovemaApiUrl!);
 
 var app = builder.Build();
 app.ApplyMigrations();
