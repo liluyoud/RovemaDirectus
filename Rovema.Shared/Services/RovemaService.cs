@@ -30,10 +30,9 @@ public class RovemaService
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }
 
-    public async Task<TData?> GetCachedItemAsync<TData>(string collection, long id ) where TData : class
+    public async Task<TData?> GetCachedItemAsync<TData>(string collection, long id) where TData : class
     {
         var item = await _cache.GetAsync($"{nameof(TData)}-{id}", async token => {
-
             return await GetItemAsync<TData>(collection, id);
         }, CacheOptions.FiveMinutesExpiration);
         return item;
@@ -53,21 +52,12 @@ public class RovemaService
                     AllowTrailingCommas = true, 
                     PropertyNameCaseInsensitive = true 
                 });
-                return item?.Data;
+                if (item != null && item.Data != null) 
+                    return item.Data;
             }
         }
         return default;
     }
-
-    //public async Task<List<RpaModel>?> GetRpasAsync(string? type = null)
-    //{
-    //    string? filter = null;
-    //    if (type != null) filter = string.Concat("{ \"_and\": [ { \"type\" : { \"_eq\" :\"", type, "\" } }, { \"status\" : { \"_eq\" : \"published\" } } ] }");  
-    //    var rpas = await _directus.GetRpasAsync(_accessToken, "id,name,type,status,settings", filter);
-    //    _logger.LogInformation("GetRpasAsync executed");
-    //    return rpas.Data;
-    //}
-
 
 }
 

@@ -1,5 +1,7 @@
 ﻿using Dclt.Shared.Models;
 using Dclt.Shared.Services;
+using Dclt.Shared.Extensions;
+using Microsoft.Extensions.Caching.Distributed;
 using Rovema.Shared.Contracts;
 using Rovema.Shared.Models;
 
@@ -11,7 +13,13 @@ public static class Endpoints
     {
         #region Rovema
         app.MapGet("rpas/weather", async (DirectusService directus) => {
-            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("rpas", 5, "[type][_eq]=Tempo");
+            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("weather", "rpas", 5, "{ \"_and\": [ { \"type\": { \"_eq\": \"Tempo\" } }, { \"status\": { \"_eq\": \"published\" } } ] }");
+            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
+
+        }).Produces<IEnumerable<RpaModel>>();
+
+        app.MapGet("rpas/ion", async (DirectusService directus) => {
+            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("ion", "rpas", 5, "{ \"_and\": [ { \"type\": { \"_eq\": \"Ion\" } }, { \"status\": { \"_eq\": \"published\" } } ] }");
             return rpas is null ? Results.NotFound() : Results.Ok(rpas);
 
         }).Produces<IEnumerable<RpaModel>>();
@@ -22,11 +30,19 @@ public static class Endpoints
 
         }).Produces<WeatherModel>();
 
-        app.MapPost("reads/weather", async (CreateReadWeather read, DirectusService directus) => {
+        app.MapPost("reads/weather", async (CreateReadWeather read, DirectusService directus, IDistributedCache cache) => {
             var item = await directus.CreateItemAsync<CreateReadWeather, ReadWeatherModel>("reads_weather", read);
+            await cache.SetObjectAsync($"rpa-weather-{read.RpaId}", item);
             return item is null ? Results.NoContent() : Results.Ok(item);
 
         }).Produces<ReadWeatherModel>();
+
+        app.MapPost("reads/ion", async (CreateReadIon read, DirectusService directus, IDistributedCache cache) => {
+            var item = await directus.CreateItemAsync<CreateReadIon, ReadIonModel>("reads_ion", read);
+            await cache.SetObjectAsync($"rpa-ion-{read.RpaId}", item);
+            return item is null ? Results.NoContent() : Results.Ok(item);
+
+        }).Produces<ReadIonModel>();
 
         #endregion
 
@@ -54,29 +70,11 @@ public static class Endpoints
             return rpa is null ? Results.NoContent() : Results.Ok(rpa);
 
         }).Produces<RpaModel>();
-        #endregion
 
         app.MapDelete("rpas", async (long id, DirectusService directus) => {
             return await directus.DeleteItemAsync("rpas", id);
         }).Produces<bool>();
-
-
-        #region Cached
-
-        app.MapGet("cached/{collection}/{id}", async (string collection, long id, DirectusService directus) => {
-            var rpa = await directus.GetCachedItemAsync<RpaModel>(collection, id, 5);
-            return rpa is null ? Results.NotFound() : Results.Ok(rpa);
-
-        }).Produces<RpaModel>();
-
-        app.MapGet("cached/{collection}", async (string collection, DirectusService directus) => {
-            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>(collection, 5);
-            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
-
-        }).Produces<RpaModel>();
-
         #endregion
     }
-
 
 }
