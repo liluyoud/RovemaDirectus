@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Shared", "Rovema.Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Coravel", "Rovema.Coravel\Rovema.Coravel.csproj", "{8CB9E102-6DA1-4A53-8994-A9F447D52E68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dclt.Shared", "..\Shared\Dclt.Shared\Dclt.Shared.csproj", "{BD062413-7188-4CE1-9691-0A68A6186583}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{8CB9E102-6DA1-4A53-8994-A9F447D52E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CB9E102-6DA1-4A53-8994-A9F447D52E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CB9E102-6DA1-4A53-8994-A9F447D52E68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD062413-7188-4CE1-9691-0A68A6186583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD062413-7188-4CE1-9691-0A68A6186583}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD062413-7188-4CE1-9691-0A68A6186583}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD062413-7188-4CE1-9691-0A68A6186583}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
