@@ -6,28 +6,18 @@ using Rovema.Shared.Models;
 
 namespace Rovema.Shared.Extensions;
 
-public static class WeatherExtension
+public static class ReadExtension
 {
-    public static ReadWeatherModel ToReadModel(this WeatherModel weather, int rpaId)
+    public static CreateReadSolar ToCreateReadSolar(this List<KeyValueModel> model, RpaModel rpa)
     {
-        return new ReadWeatherModel
+        return new CreateReadSolar
         {
-            RpaId = rpaId,
-            ReadAt = weather.ReadAt,  
-            WeatherId = weather.WeatherId,
-            Description = weather.Description?.PrimeiraMaiuscula(),
-            Icon = weather.ToDirectusIcon(),
-            TempC = weather.TempC,
-            FeelsC = weather.FeelsC,
-            Humidity = (int?)weather.Humidity,
-            Clouds = (int?)weather.Clouds,
-            WindSpeed = weather.WindSpeed,    
-            WindDirection = (int?)weather.WindDirection,
-            Visibility = (int?)weather.Visibility
+            RpaId = rpa.Id,
+            
         };
     }
 
-    public static CreateReadWeather ToCreateReadModel(this WeatherModel weather, int rpaId)
+    public static CreateReadWeather ToCreateReadWeather(this WeatherModel weather, int rpaId)
     {
         return new CreateReadWeather
         {

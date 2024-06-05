@@ -34,7 +34,7 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
         var weather = await rovema.GetWeatherAsync(latitude, longitude);
         if (weather != null)
         {
-            var read = weather.ToCreateReadModel(rpaId);
+            var read = weather.ToCreateReadWeather(rpaId);
             await rovema.AddWeatherAsync(read);
             // salvar cache
         }

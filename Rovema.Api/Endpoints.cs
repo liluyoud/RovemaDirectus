@@ -4,6 +4,7 @@ using Dclt.Shared.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Rovema.Shared.Contracts;
 using Rovema.Shared.Models;
+using Rovema.Shared.Services;
 
 namespace Rovema.Api;
 
@@ -24,11 +25,29 @@ public static class Endpoints
 
         }).Produces<IEnumerable<RpaModel>>();
 
+        app.MapGet("rpas/solar", async (DirectusService directus) => {
+            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("solar", "rpas", 5, "{ \"_and\": [ { \"type\": { \"_eq\": \"Solarimetrica\" } }, { \"status\": { \"_eq\": \"published\" } } ] }");
+            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
+
+        }).Produces<IEnumerable<RpaModel>>();
+
+        //app.MapGet("ion", async (string address, bool reverse = false, HttpService http) => {
+            //var weather = await http.GetCachedWeatherAsync(latitude, longitude);
+            //return weather is null ? Results.NotFound() : Results.Ok(weather);
+
+        //}).Produces<WeatherModel>();
+
         app.MapGet("weather", async (string latitude, string longitude, HttpService http) => {
             var weather = await http.GetCachedWeatherAsync(latitude, longitude);
             return weather is null ? Results.NotFound() : Results.Ok(weather);
 
         }).Produces<WeatherModel>();
+
+        app.MapGet("solar", async (string address, ReadService read) => {
+            var solar = await read.GetCachedSolarAsync(address);
+            return solar is null ? Results.NotFound() : Results.Ok(solar);
+
+        }).Produces<List<KeyValueModel>>();
 
         app.MapPost("reads/weather", async (CreateReadWeather read, DirectusService directus, IDistributedCache cache) => {
             var item = await directus.CreateItemAsync<CreateReadWeather, ReadWeatherModel>("reads_weather", read);

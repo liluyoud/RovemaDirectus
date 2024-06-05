@@ -13,6 +13,9 @@ public interface IRovemaService
     [Get("/rpas/ion")]
     Task<IEnumerable<RpaModel>> GetRpasIonAsync();
 
+    [Get("/rpas/solar")]
+    Task<IEnumerable<RpaModel>> GetRpasSolarAsync();
+
     [Get("/weather")]
     Task<WeatherModel> GetWeatherAsync(string latitude, string longitude);
 

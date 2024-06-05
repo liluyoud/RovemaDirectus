@@ -3,6 +3,7 @@ using Dclt.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Rovema.Coravel.Data;
 using Rovema.Shared.Interfaces;
+using Rovema.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
