@@ -4,24 +4,16 @@ using System.Net;
 using Dclt.Shared.Models;
 using Dclt.Shared.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
+using Rovema.Shared.Models;
+using Dclt.Shared.Services;
 
 namespace Rovema.Shared.Services;
 
-public class ReadService
+public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, DirectusService directus)
 {
-    private readonly ILogger<ReadService> _logger;
-    private readonly IDistributedCache _cache;
-
-
-    public ReadService(ILogger<ReadService> logger, IDistributedCache cache)
-    {
-        _logger = logger;
-        _cache = cache;
-    }
-
     public async Task<List<KeyValueModel>?> GetCachedSolarAsync(string address)
     {
-        var item = await _cache.GetAsync($"solar-{address}", async token => {
+        var item = await cache.GetAsync($"solarimetric-{address}", async token => {
 
             return await GetSolarAsync(address);
         }, CacheOptions.GetExpiration(1));
@@ -55,9 +47,25 @@ public class ReadService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"GetSolarAsync {address} not executed: {ex.Message}");
+            logger.LogError($"GetSolarAsync {address} not executed: {ex.Message}");
         }
         return default;
+    }
+
+    public async Task<IEnumerable<SolarPanelModel>?> GetCachedSolarPanelsAsync(int rpaId)
+    {
+        var item = await cache.GetAsync($"solarpanels-{rpaId}", async token => {
+
+            return await GetSolarPanelsAsync(rpaId);
+        }, CacheOptions.GetExpiration(10));
+        return item;
+    }
+
+    public async Task<IEnumerable<SolarPanelModel>?> GetSolarPanelsAsync(int rpaId)
+    {
+        var filter = $"{{ \"_and\": [ {{ \"rpa_id\": {{ \"_eq\": \"{rpaId}\" }} }}, {{ \"status\": {{ \"_eq\": \"published\" }} }} ] }}";
+        var panels = await directus.GetCachedItemsAsync<IEnumerable<SolarPanelModel>>($"panels-{rpaId}", "solar_panels", 30, filter);
+        return panels;
     }
 
 }

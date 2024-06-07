@@ -18,9 +18,9 @@ public class IonJob(ILogger<IonJob> logger, IRovemaService rovema) : IInvocable
             var tasks = new List<Task>();
             foreach (var rpa in rpas)
             {
-                var primary = rpa.GetSetting("primary");
-                var secondary = rpa.GetSetting("secondary");
-                var reverseStr = rpa.GetSetting("reverse");
+                var primary = rpa.Settings.GetKey("primary");
+                var secondary = rpa.Settings.GetKey("secondary");
+                var reverseStr = rpa.Settings.GetKey("reverse");
                 var reverse = reverseStr == null || reverseStr == "false" ? false : true;
                 if (primary != null)
                 {

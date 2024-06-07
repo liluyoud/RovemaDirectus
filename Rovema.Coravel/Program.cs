@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Coravel.Pro;
 using Dclt.Shared.Extensions;
-using Microsoft.EntityFrameworkCore;
+using Dclt.Shared.Services;
 using Rovema.Coravel.Data;
 using Rovema.Shared.Interfaces;
 using Rovema.Shared.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 var rovemaSqlite = builder.Configuration["Environment:ROVEMA_SQLITE"];
 var rovemaApiUrl = builder.Configuration["Environment:ROVEMAAPI_URL"];
 
+// services
 builder.Services.AddDbContext<CoravelContext>(options =>  options.UseSqlite(rovemaSqlite));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages().AddNewtonsoftJson(); 

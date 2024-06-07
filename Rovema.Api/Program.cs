@@ -1,6 +1,5 @@
-using Dclt.Shared.Helpers;
 using Rovema.Api;
-using Rovema.Shared.Services;
+using Rovema.Shared.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // services
-builder.Services.AddDcltServices(builder.Configuration);
-builder.Services.AddSingleton<ReadService>();
-
+builder.Services.AddRovemaServices(builder.Configuration);
 
 // app
 var app = builder.Build();

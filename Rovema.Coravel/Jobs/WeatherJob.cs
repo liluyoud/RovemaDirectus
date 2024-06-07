@@ -1,4 +1,5 @@
 ﻿using Coravel.Invocable;
+using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
 using Rovema.Shared.Interfaces;
 
@@ -14,8 +15,8 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
             var tasks = new List<Task>();
             foreach (var rpa in rpas)
             {
-                var latitude = rpa.GetSetting("Latitude");
-                var longitude = rpa.GetSetting("Longitude");
+                var latitude = rpa.Settings.GetKey("Latitude");
+                var longitude = rpa.Settings.GetKey("Longitude");
                 if (latitude != null && longitude != null)
                 {
                     tasks.Add(Read(rpa.Id, latitude, longitude));
