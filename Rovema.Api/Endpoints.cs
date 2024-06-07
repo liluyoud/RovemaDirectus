@@ -46,7 +46,13 @@ public static class Endpoints
         #endregion
 
         #region Read Controlers
-        
+
+        app.MapGet("ion", async (string address, bool reverse, ReadService read) => {
+            var ion = await read.GetCachedIonAsync(address, reverse);
+            return ion is null ? Results.NotFound() : Results.Ok(ion);
+
+        }).Produces<IonModel>();
+
         app.MapGet("weather", async (string latitude, string longitude, HttpService http) => {
             var weather = await http.GetCachedWeatherAsync(latitude, longitude);
             return weather is null ? Results.NotFound() : Results.Ok(weather);

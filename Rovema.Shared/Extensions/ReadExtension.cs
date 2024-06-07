@@ -3,11 +3,52 @@ using Dclt.Shared.Extensions;
 using Dclt.Shared.Models;
 using Rovema.Shared.Contracts;
 using Rovema.Shared.Models;
+using System.Text.Json.Serialization;
 
 namespace Rovema.Shared.Extensions;
 
 public static class ReadExtension
 {
+    public static CreateReadIon ToCreateReadIon (this IonModel ion, int rpaId, string Type)
+    {
+        return new CreateReadIon()
+        {
+            RpaId = rpaId,
+            Type = Type,
+            Power_KW_Total = ion.Power_KW_Total,
+            Power_KW_A = ion.Power_KW_A,
+            Power_KW_B = ion.Power_KW_B,
+            Power_KW_C = ion.Power_KW_C,
+            Power_KVA_Total = ion.Power_KVA_Total,
+            Power_KVA_A = ion.Power_KVA_A,
+            Power_KVA_B = ion.Power_KVA_B,
+            Power_KVA_C = ion.Power_KVA_C,
+            Power_KVAR_Total = ion.Power_KVAR_Total,
+            Power_KVAR_A = ion.Power_KVAR_A,
+            Power_KVAR_B = ion.Power_KVAR_B,
+            Power_KVAR_C = ion.Power_KVAR_C,
+            Current_I_AVG = ion.Current_I_AVG,
+            Current_I_A = ion.Current_I_A,
+            Current_I_B = ion.Current_I_B,
+            Current_I_C = ion.Current_I_C,
+            Current_I_Unbal = ion.Current_I_Unbal,
+            Factor_Sign_Total = ion.Factor_Sign_Total,
+            Factor_Sign_A = ion.Factor_Sign_A,
+            Factor_Sign_B = ion.Factor_Sign_B,
+            Factor_Sign_C = ion.Factor_Sign_C,
+            Voltage_Vln_Avg = ion.Voltage_Vln_Avg,
+            Voltage_Vln_A = ion.Voltage_Vln_A,
+            Voltage_Vln_B = ion.Voltage_Vln_B,
+            Voltage_Vln_C = ion.Voltage_Vln_C,
+            Voltage_Vll_Avg = ion.Voltage_Vll_Avg,
+            Voltage_Vll_AB = ion.Voltage_Vll_AB,
+            Voltage_Vll_BC = ion.Voltage_Vll_BC,
+            Voltage_Vll_CA = ion.Voltage_Vll_CA,
+            Voltage_V_Unbal = ion.Voltage_V_Unbal,
+            Frequency = ion.Frequency
+        };
+    }
+
     public static CreateReadSolar ToCreateReadSolar(this List<KeyValueModel> model, RpaModel rpa)
     {
         var address = rpa.Settings.GetKey("address");
@@ -118,7 +159,6 @@ public static class ReadExtension
 
         return teoricPower / 1000;
     }
-
 
     public static string ToDirectusIcon(this WeatherModel weather)
     {
