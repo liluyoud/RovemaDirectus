@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Coravel.Pro;
 using Dclt.Shared.Extensions;
-using Dclt.Shared.Services;
 using Rovema.Coravel.Data;
 using Rovema.Shared.Interfaces;
 using Rovema.Shared.Services;
@@ -18,6 +17,7 @@ builder.Services.AddDbContext<CoravelContext>(options =>  options.UseSqlite(rove
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages().AddNewtonsoftJson(); 
 builder.Services.AddCoravelPro(typeof(CoravelContext));
+builder.Services.AddSingleton<PlayService>();
 builder.Services.AddRefit<IRovemaService>(rovemaApiUrl!);
 
 var app = builder.Build();

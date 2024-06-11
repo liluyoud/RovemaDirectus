@@ -6,9 +6,6 @@ using Rovema.Shared.Contracts;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
 using Rovema.Shared.Extensions;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Refit;
 
 namespace Rovema.Api;
 
@@ -40,6 +37,13 @@ public static class Endpoints
         app.MapGet("rpas/solar", async (DirectusService directus) => {
             var filter = "{ \"_and\": [ { \"type\": { \"_eq\": \"Solarimetrica\" } }, { \"status\": { \"_eq\": \"published\" } } ] }";
             var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("solar", "rpas", 5, filter);
+            return rpas is null ? Results.NotFound() : Results.Ok(rpas);
+
+        }).Produces<IEnumerable<RpaModel>>();
+
+        app.MapGet("rpas/inverter", async (DirectusService directus) => {
+            var filter = "{ \"_and\": [ { \"type\": { \"_eq\": \"Inversor\" } }, { \"status\": { \"_eq\": \"published\" } } ] }";
+            var rpas = await directus.GetCachedItemsAsync<IEnumerable<RpaModel>>("inverter", "rpas", 5, filter);
             return rpas is null ? Results.NotFound() : Results.Ok(rpas);
 
         }).Produces<IEnumerable<RpaModel>>();
