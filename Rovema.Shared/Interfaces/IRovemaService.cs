@@ -23,7 +23,8 @@ public interface IRovemaService
     [Get("/rpas/inverter")]
     Task<IEnumerable<RpaModel>> GetRpasInverterAsync();
 
-    [Get("/weather")]
+    
+    [Get("/ion")]
     Task<IonModel> GetIonAsync(string address, bool reverse);
 
     [Get("/weather")]
@@ -38,6 +39,9 @@ public interface IRovemaService
 
     [Post("/reads/ion")]
     Task<ReadIonModel> AddIonAsync(CreateReadIon read);
+
+    [Post("/reads/inverter")]
+    Task<ReadInverterModel> AddInverterAsync(CreateReadInverter read);
 
     [Post("/reads/solar")]
     Task<ReadIonModel> AddSolarAsync(CreateReadSolar read);

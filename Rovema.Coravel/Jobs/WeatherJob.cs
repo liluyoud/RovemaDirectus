@@ -37,7 +37,6 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
         {
             var read = weather.ToCreateReadWeather(rpaId);
             await rovema.AddWeatherAsync(read);
-            // salvar cache
         }
     }
 

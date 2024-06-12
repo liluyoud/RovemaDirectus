@@ -200,4 +200,18 @@ public static class ReadExtension
             icon = "grain";
         return icon;
     }
+
+    public static double GetPowerMultiplicator(this string? unit)
+    {
+        if (unit == null) return 1;
+        if (unit.ToLower().Contains("mw"))
+            return 1000;
+        else if (unit.ToLower().Contains("gw"))
+            return 1000000;
+        else if (unit.ToLower().Contains("kw"))
+            return 1;
+        else if (unit.ToLower().Contains("w"))
+            return 0.001;
+        return 1;
+    }
 }

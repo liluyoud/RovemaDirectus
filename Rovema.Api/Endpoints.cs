@@ -87,6 +87,13 @@ public static class Endpoints
 
         }).Produces<ReadIonModel>();
 
+        app.MapPost("reads/inverter", async (CreateReadInverter read, DirectusService directus, IDistributedCache cache) => {
+            var item = await directus.CreateItemAsync<CreateReadInverter, ReadInverterModel>("reads_inverter", read);
+            await cache.SetObjectAsync($"rpa-inverter-{read.RpaId}", item);
+            return item is null ? Results.NoContent() : Results.Ok(item);
+
+        }).Produces<ReadInverterModel>();
+
         app.MapPost("reads/solar", async (CreateReadSolar read, DirectusService directus, ReadService readService, IDistributedCache cache) => {
 
             var panels = await readService.GetCachedSolarPanelsAsync(read.RpaId);
