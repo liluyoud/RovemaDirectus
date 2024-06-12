@@ -1,6 +1,5 @@
 ﻿using Coravel.Invocable;
 using Dclt.Shared.Extensions;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Playwright;
 using Rovema.Shared.Extensions;
 using Rovema.Shared.Interfaces;
@@ -31,10 +30,11 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
                 {
                     case "enspire": tasks[i] = ReadEnspire(page, rpas[i]); break;
                     case "solarcloud": tasks[i] = ReadSolarCloud(page, rpas[i]); break;
+                    case "solarview": tasks[i] = ReadSolarView(page, rpas[i]); break;
                 }
             }
             await Task.WhenAll(tasks);
-            logger.LogInformation($"WebBuritisJob executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            logger.LogInformation($"InverterJob executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
     }
 
@@ -96,21 +96,19 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
         var user = rpa.Settings.GetKey("user");
         var password = rpa.Settings.GetKey("password");
         var url = rpa.Settings.GetKey("url");
-        var detail = rpa.Settings.GetKey("detail");
         var detailUrl = rpa.Settings.GetKey("detailUrl");
 
         if (string.IsNullOrEmpty(user)) throw new Exception("[user] setting not exists");
         if (string.IsNullOrEmpty(password)) throw new Exception("[password] setting not exists");
         if (string.IsNullOrEmpty(url)) throw new Exception("[url] setting not exists");
-        if (string.IsNullOrEmpty(detail)) throw new Exception("[detail] setting not exists");
         if (string.IsNullOrEmpty(detailUrl)) throw new Exception("[detailUrl] setting not exists");
 
         if (page.Url.Contains("blank")) // first acces
         {
             await page.GotoAsync(url);
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await page.GetByPlaceholder("Conta").FillAsync("ufvsrovema@gmail.com");
-            await page.GetByPlaceholder("Senha").FillAsync("rovema123");
+            await page.GetByPlaceholder("Conta").FillAsync(user);
+            await page.GetByPlaceholder("Senha").FillAsync(password);
             await page.GetByText("Entrar").ClickAsync();
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await CheckSkip(page);
@@ -151,6 +149,83 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             }
         }
 
+    }
+
+    private async Task ReadSolarView(IPage page, RpaModel rpa)
+    {
+        var user = rpa.Settings.GetKey("user");
+        var password = rpa.Settings.GetKey("password");
+        var url = rpa.Settings.GetKey("url");
+        var detailUrl = rpa.Settings.GetKey("detailUrl");
+
+        if (string.IsNullOrEmpty(user)) throw new Exception("[user] setting not exists");
+        if (string.IsNullOrEmpty(password)) throw new Exception("[password] setting not exists");
+        if (string.IsNullOrEmpty(url)) throw new Exception("[url] setting not exists");
+        if (string.IsNullOrEmpty(detailUrl)) throw new Exception("[detailUrl] setting not exists");
+
+        if (page.Url.ToLower().Contains("blank")) // first acces
+        {
+            await page.GotoAsync(url);
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }
+
+        if (page.Url.ToLower().Contains("login")) // login page
+        {
+            var iframeElement = await page.QuerySelectorAsync("#temp_iframe");
+            if (iframeElement != null)
+            {
+                var iframe = await iframeElement.ContentFrameAsync();
+                if (iframe != null)
+                {
+                    await iframe.FillAsync("#email", user);
+                    await iframe.FillAsync("#password", password);
+                }
+            }
+        }
+
+        if (page.Url.ToLower() == "https://my.solarview.com.br/")
+        {
+            await page.GotoAsync(detailUrl);
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }
+
+        if (page.Url.ToLower() == detailUrl.ToLower())
+        {
+            await page.ReloadAsync();
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Task.Delay(10000);
+
+            var inverter = new CreateReadInverter() { RpaId = rpa.Id };
+            
+            var currentElement = await page.QuerySelectorAsync("#textPotenciaInstantanea");
+            if (currentElement != null)
+            {
+                var currentValue = await currentElement.GetAttributeAsync("title");
+                inverter.Current = currentValue.ToDouble(',');
+            }
+
+            var monthElement = await page.QuerySelectorAsync("#textEnergia");
+            if (monthElement != null)
+            {
+                var monthValue = await monthElement.GetAttributeAsync("title");
+                inverter.Month = monthValue.ToDouble(',');
+            }
+
+            await page.ClickAsync("#tab1");
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Task.Delay(10000);
+            var dayElement = await page.QuerySelectorAsync("#textEnergia");
+            if (dayElement != null)
+            {
+                var dayValue = await dayElement.GetAttributeAsync("title");
+                inverter.Day = dayValue.ToDouble(',');
+            }
+
+            if (inverter.Current != null && inverter.Current > 0)
+            {
+                await rovema.AddInverterAsync(inverter);
+            }
+        }
     }
 
     async Task CheckSkip(IPage page)
