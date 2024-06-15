@@ -34,7 +34,6 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
                 }
             }
             await Task.WhenAll(tasks);
-            logger.LogInformation($"InverterJob executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
     }
 
@@ -86,6 +85,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
                 };
 
                 var read = await rovema.AddInverterAsync(inverter);
+                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
         }
 
@@ -146,6 +146,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             if (inverter.Current != null && inverter.Current > 0)
             {
                 var read = await rovema.AddInverterAsync(inverter);
+                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
         }
 
@@ -224,6 +225,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             if (inverter.Current != null && inverter.Current > 0)
             {
                 await rovema.AddInverterAsync(inverter);
+                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
         }
     }

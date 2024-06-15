@@ -120,7 +120,7 @@ public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, D
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Ion RPA {address}: {ex.Message}");
         }
         return null;
     }
@@ -161,7 +161,7 @@ public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, D
         }
         catch (Exception ex)
         {
-            logger.LogError($"GetSolarAsync {address} not executed: {ex.Message}");
+            logger.LogError($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Solar RPA {address}: {ex.Message}");
         }
         return default;
     }

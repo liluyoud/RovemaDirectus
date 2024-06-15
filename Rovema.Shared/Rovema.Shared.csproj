@@ -7,13 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Dclt.Shared" Version="1.0.19" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
 		<PackageReference Include="Microsoft.Playwright" Version="1.44.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Shared\Dclt.Shared\Dclt.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

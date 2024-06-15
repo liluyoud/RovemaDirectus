@@ -19,7 +19,6 @@ public class SolarJob(ILogger<SolarJob> logger, IRovemaService apiService) : IIn
                 tasks.Add(Read(rpa));
             }
             await Task.WhenAll(tasks);
-            logger.LogInformation($"SolarJob executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
     }
 
@@ -36,6 +35,8 @@ public class SolarJob(ILogger<SolarJob> logger, IRovemaService apiService) : IIn
                     var readSolar = solarData.ToCreateReadSolar(rpa);
                     await apiService.AddSolarAsync(readSolar);
                 }
+                logger.LogInformation($"SolarJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+
             }
             catch (Exception ex)
             {

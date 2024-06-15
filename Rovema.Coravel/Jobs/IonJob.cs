@@ -2,6 +2,7 @@
 using Rovema.Shared.Interfaces;
 using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
+using Rovema.Shared.Models;
 
 namespace Rovema.Coravel.Jobs;
 
@@ -21,28 +22,36 @@ public class IonJob(ILogger<IonJob> logger, IRovemaService rovema) : IInvocable
                 var reverse = reverseStr == null || reverseStr == "false" ? false : true;
                 if (primary != null)
                 {
-                    tasks.Add(Read(rpa.Id, primary, "Primário", reverse));
+                    tasks.Add(Read(rpa, primary, "Primário", reverse));
                 }
                 if (secondary != null)
                 {
-                    tasks.Add(Read(rpa.Id, secondary, "Secundário", reverse));
+                    tasks.Add(Read(rpa, secondary, "Secundário", reverse));
                 }
             }
             await Task.WhenAll(tasks);
-            logger.LogInformation($"IonJob executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
     }
 
-    private async Task Read(int rpaId, string address, string type, bool reverse)
+    private async Task Read(RpaModel rpa, string address, string type, bool reverse)
     {
         if (!string.IsNullOrEmpty(address))
         {
-            var ionRead = await rovema.GetIonAsync(address, reverse);
-            if (ionRead != null)
+            try
             {
-                var read = ionRead.ToCreateReadIon(rpaId, type);
-                await rovema.AddIonAsync(read);
-            } 
+                var ionRead = await rovema.GetIonAsync(address, reverse);
+                if (ionRead != null)
+                {
+                    var read = ionRead.ToCreateReadIon(rpa.Id, type);
+                    await rovema.AddIonAsync(read);
+                }
+                logger.LogInformation($"IonJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+
+            }
+            catch (Exception ex) 
+            {
+                logger.LogError($"Erro ao executar IonJob {rpa.Name} {address}: {ex.Message}");
+            }
         }
     }
 
