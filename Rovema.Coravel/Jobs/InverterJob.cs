@@ -5,6 +5,7 @@ using Rovema.Shared.Extensions;
 using Rovema.Shared.Interfaces;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
+using System.Net;
 
 namespace Rovema.Coravel.Jobs;
 
@@ -85,7 +86,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
                 };
 
                 var read = await rovema.AddInverterAsync(inverter);
-                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }
 
@@ -146,7 +147,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             if (inverter.Current != null && inverter.Current > 0)
             {
                 var read = await rovema.AddInverterAsync(inverter);
-                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }
 
@@ -225,7 +226,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             if (inverter.Current != null && inverter.Current > 0)
             {
                 await rovema.AddInverterAsync(inverter);
-                logger.LogInformation($"InverterJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }
     }

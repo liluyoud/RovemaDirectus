@@ -3,22 +3,19 @@ using HtmlAgilityPack;
 using System.Net;
 using Dclt.Shared.Models;
 using Dclt.Shared.Extensions;
-using Microsoft.Extensions.Caching.Distributed;
-using Rovema.Shared.Models;
-using Dclt.Shared.Services;
 using Rovema.Shared.Contracts;
 
 namespace Rovema.Shared.Services;
 
-public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, DirectusService directus)
+public class ReadService(ILogger<ReadService> logger)
 {
-    public async Task<IonModel?> GetCachedIonAsync(string address, bool reverse = false)
-    {
-        var item = await cache.GetAsync($"ion-{address}", async token => {
-            return await GetIonAsync(address);
-        }, CacheOptions.SetExpiration(1));
-        return item;
-    }
+    //public async Task<IonModel?> GetCachedIonAsync(string address, bool reverse = false)
+    //{
+    //    var item = await cache.GetAsync($"ion-{address}", async token => {
+    //        return await GetIonAsync(address);
+    //    }, CacheOptions.SetExpiration(1));
+    //    return item;
+    //}
 
     public async Task<IonModel?> GetIonAsync(string address, bool reverse = false)
     {
@@ -125,14 +122,14 @@ public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, D
         return null;
     }
 
-    public async Task<List<KeyValueModel>?> GetCachedSolarAsync(string address)
-    {
-        var item = await cache.GetAsync($"solarimetric-{address}", async token => {
+    //public async Task<List<KeyValueModel>?> GetCachedSolarAsync(string address)
+    //{
+    //    var item = await cache.GetAsync($"solarimetric-{address}", async token => {
 
-            return await GetSolarAsync(address);
-        }, CacheOptions.SetExpiration(1));
-        return item;
-    }
+    //        return await GetSolarAsync(address);
+    //    }, CacheOptions.SetExpiration(1));
+    //    return item;
+    //}
 
     public async Task<List<KeyValueModel>?> GetSolarAsync(string address)
     {
@@ -166,21 +163,21 @@ public class ReadService(ILogger<ReadService> logger, IDistributedCache cache, D
         return default;
     }
 
-    public async Task<IEnumerable<SolarPanelModel>?> GetCachedSolarPanelsAsync(int rpaId)
-    {
-        var item = await cache.GetAsync($"solarpanels-{rpaId}", async token => {
+    //public async Task<IEnumerable<SolarPanelModel>?> GetCachedSolarPanelsAsync(int rpaId)
+    //{
+    //    var item = await cache.GetAsync($"solarpanels-{rpaId}", async token => {
 
-            return await GetSolarPanelsAsync(rpaId);
-        }, CacheOptions.SetExpiration(10));
-        return item;
-    }
+    //        return await GetSolarPanelsAsync(rpaId);
+    //    }, CacheOptions.SetExpiration(10));
+    //    return item;
+    //}
 
-    public async Task<IEnumerable<SolarPanelModel>?> GetSolarPanelsAsync(int rpaId)
-    {
-        var filter = $"{{ \"_and\": [ {{ \"rpa_id\": {{ \"_eq\": \"{rpaId}\" }} }}, {{ \"status\": {{ \"_eq\": \"published\" }} }} ] }}";
-        var panels = await directus.GetCachedItemsAsync<IEnumerable<SolarPanelModel>>($"panels-{rpaId}", "solar_panels", 30, filter);
-        return panels;
-    }
+    //public async Task<IEnumerable<SolarPanelModel>?> GetSolarPanelsAsync(int rpaId)
+    //{
+    //    var filter = $"{{ \"_and\": [ {{ \"rpa_id\": {{ \"_eq\": \"{rpaId}\" }} }}, {{ \"status\": {{ \"_eq\": \"published\" }} }} ] }}";
+    //    var panels = await directus.GetCachedItemsAsync<IEnumerable<SolarPanelModel>>($"panels-{rpaId}", "solar_panels", 30, filter);
+    //    return panels;
+    //}
 
 }
 

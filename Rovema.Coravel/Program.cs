@@ -4,6 +4,8 @@ using Dclt.Shared.Extensions;
 using Rovema.Coravel.Data;
 using Rovema.Shared.Interfaces;
 using Rovema.Shared.Services;
+using Dclt.Shared.Services;
+using Dclt.Shared.Helpers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ builder.Services.AddRazorPages().AddNewtonsoftJson();
 builder.Services.AddCoravelPro(typeof(CoravelContext));
 builder.Services.AddSingleton<PlayService>();
 builder.Services.AddRefit<IRovemaService>(rovemaApiUrl!);
+builder.Services.AddTransient<ReadService>();
 
 var app = builder.Build();
 app.ApplyMigrations();

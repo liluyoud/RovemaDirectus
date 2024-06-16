@@ -3,7 +3,6 @@ using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
 using Rovema.Shared.Interfaces;
 using Rovema.Shared.Models;
-using System.Net;
 
 namespace Rovema.Coravel.Jobs;
 
@@ -24,7 +23,7 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
                     tasks.Add(Read(rpa, latitude, longitude));
                 } else
                 {
-                   logger.LogError($"{rpa.Name} não processado: Lat {latitude} - Lon {longitude}");
+                    logger.LogError($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - {rpa.Name} não processado: Lat {latitude} , Lon {longitude}");
                 }
             }
             await Task.WhenAll(tasks);
@@ -41,12 +40,11 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
                 var read = weather.ToCreateReadWeather(rpa.Id);
                 await rovema.AddWeatherAsync(read);
             }
-            logger.LogInformation($"WeatherJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-
+            logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - WeatherJob {rpa.Name} executado");
         }
         catch (Exception ex)
         {
-            logger.LogError($"Erro ao executar IonJob {rpa.Name} {latitude}-{longitude}: {ex.Message}");
+            logger.LogError($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Erro ao executar WeatherJob {rpa.Name}: {ex.Message}");
 
         }
     }

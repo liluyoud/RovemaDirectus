@@ -3,10 +3,11 @@ using Rovema.Shared.Interfaces;
 using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
 using Rovema.Shared.Models;
+using Rovema.Shared.Services;
 
 namespace Rovema.Coravel.Jobs;
 
-public class IonJob(ILogger<IonJob> logger, IRovemaService rovema) : IInvocable
+public class IonJob(ILogger<IonJob> logger, IRovemaService rovema, ReadService readService) : IInvocable
 {
     public async Task Invoke()
     {
@@ -39,18 +40,21 @@ public class IonJob(ILogger<IonJob> logger, IRovemaService rovema) : IInvocable
         {
             try
             {
-                var ionRead = await rovema.GetIonAsync(address, reverse);
+                //var ionRead = await rovema.GetIonAsync(address, reverse);
+                var ionRead = await readService.GetIonAsync(address, reverse);
+
                 if (ionRead != null)
                 {
                     var read = ionRead.ToCreateReadIon(rpa.Id, type);
                     await rovema.AddIonAsync(read);
                 }
-                logger.LogInformation($"IonJob {rpa.Name} executado às {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - IonJob {rpa.Name} executado");
 
             }
             catch (Exception ex) 
             {
-                logger.LogError($"Erro ao executar IonJob {rpa.Name} {address}: {ex.Message}");
+                logger.LogError($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Erro ao executar IonJob {rpa.Name} {address}: {ex.Message}");
+
             }
         }
     }
