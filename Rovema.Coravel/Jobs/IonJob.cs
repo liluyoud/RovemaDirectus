@@ -1,17 +1,24 @@
 ﻿using Coravel.Invocable;
-using Rovema.Shared.Interfaces;
 using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
+using Dclt.Directus;
+using System;
 
 namespace Rovema.Coravel.Jobs;
 
-public class IonJob(ILogger<IonJob> logger, IRovemaService rovema, ReadService readService) : IInvocable
+public class IonJob(ILogger<IonJob> logger, DirectusService directusService, ReadService readService) : IInvocable
 {
     public async Task Invoke()
     {
-        var rpas = await rovema.GetRpasIonAsync();
+        var query = new Query()
+            .Fields("id,name,type,settings")
+            .Filter("type", Operation.Equal, "Ion")
+            .Filter("status", Operation.Equal, "published")
+            .Build();
+
+        var rpas = await directusService.GetItemsAsync<IEnumerable<RpaModel>>("rpas", query);
         if (rpas != null)
         {
             var tasks = new List<Task>();
@@ -45,8 +52,8 @@ public class IonJob(ILogger<IonJob> logger, IRovemaService rovema, ReadService r
 
                 if (ionRead != null)
                 {
-                    var read = ionRead.ToCreateReadIon(rpa.Id, type);
-                    await rovema.AddIonAsync(read);
+                    var readIon = ionRead.ToCreateReadIon(rpa.Id, type);
+                    await directusService.CreateItemAsync("reads_ion", readIon);
                 }
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - IonJob {rpa.Name} executado");
 

@@ -10,8 +10,10 @@ public class CreateReadWeather
     [JsonPropertyName("weather_id")]
     public int WeatherId { get; set; }
 
+    [JsonPropertyName("description")]
     public string? Description { get; set; }
 
+    [JsonPropertyName("icon")]
     public string? Icon { get; set; }
 
     [JsonPropertyName("temp_c")]
@@ -20,8 +22,10 @@ public class CreateReadWeather
     [JsonPropertyName("feels_c")]
     public double? FeelsC { get; set; }
 
+    [JsonPropertyName("humidity")]
     public int? Humidity { get; set; }
 
+    [JsonPropertyName("clouds")]
     public int? Clouds { get; set; }
     
     [JsonPropertyName("wind_speed")]
@@ -30,5 +34,6 @@ public class CreateReadWeather
     [JsonPropertyName("wind_direction")]
     public int? WindDirection { get; set; }
 
+    [JsonPropertyName("visibility")]
     public int? Visibility { get; set; }
 }

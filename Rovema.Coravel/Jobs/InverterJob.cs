@@ -1,27 +1,33 @@
 ﻿using Coravel.Invocable;
+using Dclt.Directus;
 using Dclt.Shared.Extensions;
 using Microsoft.Playwright;
 using Rovema.Shared.Extensions;
-using Rovema.Shared.Interfaces;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
-using System.Net;
 
 namespace Rovema.Coravel.Jobs;
 
-public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaService rovema) : IInvocable
+public class InverterJob(ILogger<InverterJob> logger, DirectusService directusService, PlayService play) : IInvocable
 {
     public async Task Invoke()
     {
-        var rpas = (await rovema.GetRpasInverterAsync()).ToArray();
+        var query = new Query()
+                   .Fields("name,type,settings,date_created")
+                   .Filter("type", Operation.Equal, "Inverter")
+                   .Filter("status", Operation.Equal, "published")
+                   .Build();
 
-        await play.CreatePages(rpas.Length);
+        var rpas = (await directusService.GetItemsAsync<IEnumerable<RpaModel>>("rpas", query))?.ToArray();
 
         if (rpas != null)
         {
-    
-            var tasks = new Task[rpas.Length];
-            for (int i = 0; i < rpas.Length; i++)
+            int totalRpas = rpas.Count();
+            await play.CreatePages(totalRpas);
+
+
+            var tasks = new Task[totalRpas];
+            for (int i = 0; i < totalRpas; i++)
             {
                 var type = rpas[i].Settings.GetKey("type");
                 if (string.IsNullOrEmpty(type)) throw new Exception("[user] setting not exists");
@@ -77,7 +83,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
 
             if (current != null && current > 0)
             {
-                var inverter = new CreateReadInverter()
+                var readInverter = new CreateReadInverter()
                 {
                     RpaId = rpa.Id,
                     Current = current,
@@ -85,7 +91,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
                     Lifetime = total
                 };
 
-                var read = await rovema.AddInverterAsync(inverter);
+                await directusService.CreateItemAsync("reads_inverter", readInverter);
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }
@@ -124,7 +130,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
 
         if (page.Url.ToLower().Contains("plantdetail")) 
         { 
-            var inverter = new CreateReadInverter() { RpaId = rpa.Id };
+            var readInverter = new CreateReadInverter() { RpaId = rpa.Id };
 
             var currentValue = await page.QuerySelectorAsync(".overview-point-value");
             var currentUnit = await page.QuerySelectorAsync(".overview-point-unit");
@@ -132,7 +138,7 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             {
                 var currentValueStr = await currentValue.InnerTextAsync();
                 var currentUnitStr = await currentUnit.InnerTextAsync();
-                inverter.Current = currentValueStr.ToDouble(',') * currentUnitStr.GetPowerMultiplicator();
+                readInverter.Current = currentValueStr.ToDouble(',') * currentUnitStr.GetPowerMultiplicator();
             }
 
             var dayValue = await page.QuerySelectorAsync(".item-value");
@@ -141,12 +147,12 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             {
                 var dayValueStr = await dayValue.InnerTextAsync();
                 var dayUnitStr = await dayUnit.InnerTextAsync();
-                inverter.Day = dayValueStr.ToDouble(',') * dayUnitStr.GetPowerMultiplicator();
+                readInverter.Day = dayValueStr.ToDouble(',') * dayUnitStr.GetPowerMultiplicator();
             }
 
-            if (inverter.Current != null && inverter.Current > 0)
+            if (readInverter.Current != null && readInverter.Current > 0)
             {
-                var read = await rovema.AddInverterAsync(inverter);
+                await directusService.CreateItemAsync("reads_inverter", readInverter);
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }
@@ -197,20 +203,20 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await Task.Delay(10000);
 
-            var inverter = new CreateReadInverter() { RpaId = rpa.Id };
+            var readInverter = new CreateReadInverter() { RpaId = rpa.Id };
             
             var currentElement = await page.QuerySelectorAsync("#textPotenciaInstantanea");
             if (currentElement != null)
             {
                 var currentValue = await currentElement.GetAttributeAsync("title");
-                inverter.Current = currentValue.ToDouble(',');
+                readInverter.Current = currentValue.ToDouble(',');
             }
 
             var monthElement = await page.QuerySelectorAsync("#textEnergia");
             if (monthElement != null)
             {
                 var monthValue = await monthElement.GetAttributeAsync("title");
-                inverter.Month = monthValue.ToDouble(',');
+                readInverter.Month = monthValue.ToDouble(',');
             }
 
             await page.ClickAsync("#tab1");
@@ -220,12 +226,12 @@ public class InverterJob(ILogger<InverterJob> logger, PlayService play, IRovemaS
             if (dayElement != null)
             {
                 var dayValue = await dayElement.GetAttributeAsync("title");
-                inverter.Day = dayValue.ToDouble(',');
+                readInverter.Day = dayValue.ToDouble(',');
             }
 
-            if (inverter.Current != null && inverter.Current > 0)
+            if (readInverter.Current != null && readInverter.Current > 0)
             {
-                await rovema.AddInverterAsync(inverter);
+                await directusService.CreateItemAsync("reads_inverter", readInverter);
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
             }
         }

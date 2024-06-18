@@ -1,17 +1,23 @@
 ﻿using Coravel.Invocable;
+using Dclt.Directus;
 using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
-using Rovema.Shared.Interfaces;
 using Rovema.Shared.Models;
 using Rovema.Shared.Services;
 
 namespace Rovema.Coravel.Jobs;
 
-public class SolarJob(ILogger<SolarJob> logger, IRovemaService apiService, ReadService readService) : IInvocable
+public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService, ReadService readService) : IInvocable
 {
     public async Task Invoke()
     {
-        var rpas = await apiService.GetRpasSolarAsync();
+        var query = new Query()
+            .Fields("id,name,type,settings")
+            .Filter("type", Operation.Equal, "Solarimetrica")
+            .Filter("status", Operation.Equal, "published")
+            .Build();
+
+        var rpas = await directusService.GetItemsAsync<IEnumerable<RpaModel>>("rpas", query);
         if (rpas != null)
         {
             var tasks = new List<Task>();
@@ -34,8 +40,11 @@ public class SolarJob(ILogger<SolarJob> logger, IRovemaService apiService, ReadS
                 var solarData = await readService.GetSolarAsync(address);
                 if (solarData != null)
                 {
-                    var readSolar = solarData.ToCreateReadSolar(rpa);
-                    await apiService.AddSolarAsync(readSolar);
+                    CreateReadSolar readSolar = solarData.ToCreateReadSolar(rpa);
+                    var panels = await GetPanels(rpa.Id);
+                    var weather = await GetWeather(readSolar.WeatherId);
+                    readSolar.BuildTeoricPower(panels, weather);
+                    await directusService.CreateItemAsync("reads_solar", readSolar);
                 }
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - SolarJob {rpa.Name} executado");
             }
@@ -47,4 +56,24 @@ public class SolarJob(ILogger<SolarJob> logger, IRovemaService apiService, ReadS
         }
     }
 
+    private async Task<IEnumerable<SolarPanelModel>?> GetPanels(int rpaId)
+    {
+        var query = new Query()
+            .Filter("rpa_id", Operation.Equal, rpaId)
+            .Filter("status", Operation.Equal, "published")
+            .Build();
+        return await directusService.GetItemsAsync<IEnumerable<SolarPanelModel>>("solar_panels", query);
+    }
+
+    private async Task<ReadWeatherModel?> GetWeather(int? rpaId)
+    {
+        if (rpaId == null) return null;
+        var query = new Query()
+            .Filter("rpa_id", Operation.Equal, rpaId)
+            .Sort("-date_created")
+            .Limit(1)
+            .Build();
+        var weather = await directusService.GetItemsAsync<IEnumerable<ReadWeatherModel>>("reads_weather", query);
+        return weather?.First();
+    }
 }

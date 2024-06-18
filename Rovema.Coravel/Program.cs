@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Coravel.Pro;
-using Dclt.Shared.Extensions;
 using Rovema.Coravel.Data;
-using Rovema.Shared.Interfaces;
 using Rovema.Shared.Services;
-using Dclt.Shared.Services;
-using Dclt.Shared.Helpers;
+using Dclt.Services.OpenWeather;
+using Dclt.Directus;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +17,14 @@ builder.Services.AddDbContext<CoravelContext>(options =>  options.UseSqlite(rove
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages().AddNewtonsoftJson(); 
 builder.Services.AddCoravelPro(typeof(CoravelContext));
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<OpenWeatherService>();
+builder.Services.AddScoped<DirectusService>();
+builder.Services.AddScoped<ReadService>();
 builder.Services.AddSingleton<PlayService>();
-builder.Services.AddRefit<IRovemaService>(rovemaApiUrl!);
-builder.Services.AddTransient<ReadService>();
+//builder.Services.AddRefit<IRovemaService>(rovemaApiUrl!);
+
 
 var app = builder.Build();
 app.ApplyMigrations();

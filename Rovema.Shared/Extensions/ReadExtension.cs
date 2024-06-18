@@ -1,9 +1,9 @@
-﻿using Dclt.Shared.Enums;
+﻿using Dclt.Services.OpenWeather;
+using Dclt.Shared.Enums;
 using Dclt.Shared.Extensions;
 using Dclt.Shared.Models;
 using Rovema.Shared.Contracts;
 using Rovema.Shared.Models;
-using System.Text.Json.Serialization;
 
 namespace Rovema.Shared.Extensions;
 
@@ -49,7 +49,7 @@ public static class ReadExtension
         };
     }
 
-    public static CreateReadSolar ToCreateReadSolar(this List<KeyValueModel> model, RpaModel rpa)
+    public static CreateReadSolar ToCreateReadSolar(this List<KeyValue> model, RpaModel rpa)
     {
         var address = rpa.Settings.GetKey("address");
         var weatherId = rpa.Settings.GetKey("weatherId");
@@ -91,7 +91,7 @@ public static class ReadExtension
         return read;
     }
 
-    public static CreateReadWeather ToCreateReadWeather(this WeatherModel weather, int rpaId)
+    public static CreateReadWeather ToCreateReadWeather(this Weather weather, int rpaId)
     {
         return new CreateReadWeather
         {
@@ -160,7 +160,7 @@ public static class ReadExtension
         return teoricPower / 1000;
     }
 
-    public static string ToDirectusIcon(this WeatherModel weather)
+    public static string ToDirectusIcon(this Weather weather)
     {
         var day = weather.ReadAt.IsDayOrNight(weather.Sunrise, weather.Sunset) == DayNight.Day;
         var icon = day ? "sunny" : "clear_night";

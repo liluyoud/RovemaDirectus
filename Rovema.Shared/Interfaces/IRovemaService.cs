@@ -24,16 +24,6 @@ public interface IRovemaService
     Task<IEnumerable<RpaModel>> GetRpasInverterAsync();
 
     
-    [Get("/ion")]
-    Task<IonModel> GetIonAsync(string address, bool reverse);
-
-    [Get("/weather")]
-    Task<WeatherModel> GetWeatherAsync(string latitude, string longitude);
-
-    [Get("/solar")]
-    Task<List<KeyValueModel>> GetSolarAsync(string address);
-
-
     [Post("/reads/weather")]
     Task<ReadWeatherModel> AddWeatherAsync(CreateReadWeather read);
 

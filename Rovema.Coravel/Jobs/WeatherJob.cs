@@ -1,16 +1,23 @@
 ﻿using Coravel.Invocable;
+using Dclt.Directus;
+using Dclt.Services.OpenWeather;
 using Dclt.Shared.Extensions;
 using Rovema.Shared.Extensions;
-using Rovema.Shared.Interfaces;
 using Rovema.Shared.Models;
 
 namespace Rovema.Coravel.Jobs;
 
-public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : IInvocable
+public class WeatherJob (ILogger<WeatherJob> logger, DirectusService directusService, OpenWeatherService weatherService) : IInvocable
 {
     public async Task Invoke()
     {
-        var rpas = await rovema.GetRpasWeatherAsync();
+        var query = new Query()
+            .Fields("id,name,type,settings")
+            .Filter("type", Operation.Equal, "Tempo")
+            .Filter("status", Operation.Equal, "published")
+            .Build();
+
+        var rpas = await directusService.GetItemsAsync<IEnumerable<RpaModel>>("rpas", query);
         if (rpas != null)
         {
             var tasks = new List<Task>();
@@ -34,11 +41,11 @@ public class WeatherJob (ILogger<WeatherJob> logger, IRovemaService rovema) : II
     {
         try
         {
-            var weather = await rovema.GetWeatherAsync(latitude, longitude);
+            var weather = await weatherService.GetWeatherAsync(latitude, longitude);
             if (weather != null)
             {
-                var read = weather.ToCreateReadWeather(rpa.Id);
-                await rovema.AddWeatherAsync(read);
+                var readWeather = weather.ToCreateReadWeather(rpa.Id);
+                await directusService.CreateItemAsync("reads_weather", readWeather);
             }
             logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - WeatherJob {rpa.Name} executado");
         }
