@@ -12,7 +12,7 @@ public class InverterJob(ILogger<InverterJob> logger, DirectusService directusSe
 {
     public async Task Invoke()
     {
-        var query = new Query()
+        var query = new DirectusQuery()
                    .Fields("name,type,settings,date_created")
                    .Filter("type", Operation.Equal, "Inverter")
                    .Filter("status", Operation.Equal, "published")

@@ -11,7 +11,7 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
 {
     public async Task Invoke()
     {
-        var query = new Query()
+        var query = new DirectusQuery()
             .Fields("id,name,type,settings")
             .Filter("type", Operation.Equal, "Solarimetrica")
             .Filter("status", Operation.Equal, "published")
@@ -58,7 +58,7 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
 
     private async Task<IEnumerable<SolarPanelModel>?> GetPanels(int rpaId)
     {
-        var query = new Query()
+        var query = new DirectusQuery()
             .Filter("rpa_id", Operation.Equal, rpaId)
             .Filter("status", Operation.Equal, "published")
             .Build();
@@ -68,7 +68,7 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
     private async Task<ReadWeatherModel?> GetWeather(int? rpaId)
     {
         if (rpaId == null) return null;
-        var query = new Query()
+        var query = new DirectusQuery()
             .Filter("rpa_id", Operation.Equal, rpaId)
             .Sort("-date_created")
             .Limit(1)

@@ -11,7 +11,7 @@ public class WeatherJob (ILogger<WeatherJob> logger, DirectusService directusSer
 {
     public async Task Invoke()
     {
-        var query = new Query()
+        var query = new DirectusQuery()
             .Fields("id,name,type,settings")
             .Filter("type", Operation.Equal, "Tempo")
             .Filter("status", Operation.Equal, "published")

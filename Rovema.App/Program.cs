@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazored.LocalStorage;
 using Dclt.Directus;
 using Rovema.App;
-using Rovema.App.Authentication;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -13,12 +12,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddAuthorizationCore();
-
 builder.Services.AddHttpClient();
+
 builder.Services.AddBlazoredLocalStorage(config =>
         config.JsonSerializerOptions.WriteIndented = true);
-
-
 builder.Services.AddScoped<DirectusAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
     provider.GetRequiredService<DirectusAuthStateProvider>());

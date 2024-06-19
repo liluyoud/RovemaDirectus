@@ -12,7 +12,7 @@ public class IonJob(ILogger<IonJob> logger, DirectusService directusService, Rea
 {
     public async Task Invoke()
     {
-        var query = new Query()
+        var query = new DirectusQuery()
             .Fields("id,name,type,settings")
             .Filter("type", Operation.Equal, "Ion")
             .Filter("status", Operation.Equal, "published")
