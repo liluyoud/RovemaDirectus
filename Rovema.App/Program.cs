@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
+using Blazored.LocalStorage;
+using Dclt.Directus;
 using Rovema.App;
 using Rovema.App.Authentication;
 
@@ -13,9 +14,15 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddAuthorizationCore();
 
-builder.Services.AddScoped<BrowserStorageService>();
-builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddHttpClient();
+builder.Services.AddBlazoredLocalStorage(config =>
+        config.JsonSerializerOptions.WriteIndented = true);
+
+
+builder.Services.AddScoped<DirectusAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
-    provider.GetRequiredService<CustomAuthStateProvider>());
+    provider.GetRequiredService<DirectusAuthStateProvider>());
+
+builder.Services.AddScoped<DirectusService>();
 
 await builder.Build().RunAsync();

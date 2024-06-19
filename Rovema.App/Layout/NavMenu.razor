@@ -1,4 +1,4 @@
-﻿@inject CustomAuthStateProvider AuthStateProvider
+﻿@inject DirectusAuthStateProvider AuthStateProvider
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -32,7 +32,7 @@
                 <Authorized>
                     <label class="text-white d-block">
                         @* Hello @context.User.FindFirst(ClaimTypes.Name)!.Value *@
-                        Hello @AuthStateProvider.CurrentUser.Name
+                        Hello @AuthStateProvider.CurrentUser.FirstName @AuthStateProvider.CurrentUser.LastName
                     </label>
                     <button type="button" class="btn btn-danger" @onclick="LogoutAsync">Logout</button>
                 </Authorized>
@@ -59,7 +59,7 @@
 
     private async Task LoginAsync()
     {
-        await AuthStateProvider.LoginAsync("dummy-username", "dummy-passoword");
+        await AuthStateProvider.LoginAsync("liluyoud@rovemaenergia.com.br", "Rovema@123");
     }
     private async Task LogoutAsync()
     {
