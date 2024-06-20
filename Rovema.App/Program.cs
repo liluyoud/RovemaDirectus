@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazored.LocalStorage;
 using Dclt.Directus;
 using Rovema.App;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,5 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
     provider.GetRequiredService<DirectusAuthStateProvider>());
 
 builder.Services.AddScoped<DirectusService>();
+
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();
