@@ -1,6 +1,6 @@
 {
-  "name": "Rovema.App",
-  "short_name": "Rovema.App",
+  "name": "Rovema PME",
+  "short_name": "Rovema Energia",
   "id": "./",
   "start_url": "./",
   "display": "standalone",

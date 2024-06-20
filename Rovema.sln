@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dclt.Services", "..\Shared\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dclt.Shared", "..\Shared\Dclt.Shared\Dclt.Shared.csproj", "{6AE82D2D-BB62-4778-8974-C6A65262786F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rovema.App", "Rovema.App\Rovema.App.csproj", "{10D9D903-D81F-4ABA-AB90-F7D966BC3448}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.App", "Rovema.App\Rovema.App.csproj", "{10D9D903-D81F-4ABA-AB90-F7D966BC3448}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

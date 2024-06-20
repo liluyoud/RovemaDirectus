@@ -1,41 +1,31 @@
 ﻿@page "/login"
 @layout CleanLayout
+@inject DirectusAuthStateProvider Auth
+@inject NavigationManager Navigation
 
-<PageTitle>Login</PageTitle>
-
-@* <div style="margin:0;padding:0;height:100%;">
-    <div style="display:flex;height:100vh;">
-        <div style="width:500px;background-color:#1e1e2f;color:white;padding:20px;display:flex;flex-direction:column;justify-content:center;">
-            <h4>Parte Fixa</h4>
-            <p>Conteúdo aqui...</p>
-        </div>
-        <div style="flex-grow: 1; background-color: #f5f5f5; display: flex;justify-content: center; align-items: center; ">
-            teste
-        </div>
-    </div>
-</div> *@
+<PageTitle>Entrar</PageTitle>
 
 <MudPaper Class="d-flex" Height="100vh">
     <MudPaper Class="d-flex flex-column rounded-0 pa-12" Elevation="0" Width="500px">
-        <MudPaper Class="pb-16 d-flex flex-row" Width="100%" Height="84px">
+        <MudPaper Class="pb-16 d-flex flex-row" Width="100%" Height="84px" Elevation="5">
             <MudPaper Class="pa-2" Width="80px" Height="80px" Elevation="0">
                 <MudImage Src="images/icon512.png" Alt="Rovema Logo" Elevation="0" Class="rounded-lg" ObjectFit="ObjectFit.Fill" Fluid/>
             </MudPaper>
-            <MudPaper Class="flex-grow-1 pa-4" Height="80px" Elevation="0">
+            <MudPaper Class="flex-grow-1 pa-3" Height="80px" Elevation="0">
                 <MudText Typo="Typo.h6"> Rovema PME</MudText>
                 <MudText Typo="Typo.body1" Color="Color.Success"> Dashboard de Monitoramento</MudText>
             </MudPaper>
         </MudPaper>
         <MudText Typo="Typo.h3" Class="pt-16 mb-2">Credenciais</MudText>
         <MudForm @ref="form" Model="@loginModel">
-            <MudTextField @bind-Value="@loginModel.Email" Label="Email" Required="true" Variant="Variant.Outlined" Class="my-4" />
-            <MudTextField @bind-Value="@loginModel.Password" Label="Senha" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Class="my-4" />
+            <MudTextField @bind-Value="loginModel.Email" Label="Email" Required="true" Variant="Variant.Outlined" Class="my-4" />
+            <MudTextField @bind-Value="loginModel.Password" Label="Senha" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Class="my-4" />
             <MudButton Variant="Variant.Filled" Size="Size.Large" Color="Color.Success" OnClick="DoLogin" Class="my-4"
                        Style="width: 200px; height: 60px;">Entrar
             </MudButton>
         </MudForm>
     </MudPaper>
-    <MudPaper Class="flex-grow-1 rounded-0" Style="background: url('https://wallpaperaccess.com/full/1743523.jpg') center center / cover">
+    <MudPaper Class="flex-grow-1 rounded-0 d-none d-sm-block" Style="background: url('/images/back2.jpg') center center / cover">
     </MudPaper>
 </MudPaper>
 
@@ -43,11 +33,16 @@
     private MudForm? form;
     private LoginModel loginModel = new();
 
-    private void DoLogin()
+    private async Task DoLogin()
     {
-        if (form != null && form.IsValid)
+        if (form != null )
         {
-            // Lógica de login
+            if (!string.IsNullOrEmpty(loginModel.Email) && !string.IsNullOrEmpty(loginModel.Password))
+            {
+                var auth = await Auth.LoginAsync(loginModel.Email, loginModel.Password);
+                if (auth)
+                    Navigation.NavigateTo("/");
+            }
         }
     }
 
