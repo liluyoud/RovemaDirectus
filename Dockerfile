@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 EXPOSE 8080
 WORKDIR /src
-COPY ["Rovema.Api/Rovema.App.csproj", "Rovema.App/"]
+COPY ["Rovema.App/Rovema.App.csproj", "Rovema.App/"]
 RUN dotnet restore "./Rovema.App/Rovema.App.csproj"
 
 COPY . .
