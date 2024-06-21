@@ -20,7 +20,7 @@
         <MudForm @ref="form" Model="@loginModel">
             <MudTextField @bind-Value="loginModel.Email" Label="Email" Required="true" Variant="Variant.Outlined" Class="my-4" />
             <MudTextField @bind-Value="loginModel.Password" Label="Senha" InputType="InputType.Password" Required="true" Variant="Variant.Outlined" Class="my-4" />
-            <MudButton Variant="Variant.Filled" Size="Size.Large" Color="Color.Success" OnClick="DoLogin" Class="my-4"
+            <MudButton @ref="login" Variant="Variant.Filled" Size="Size.Large" Color="Color.Success" OnClick="DoLogin" Class="my-4"
                        Style="width: 200px; height: 60px;">Entrar
             </MudButton>
         </MudForm>
@@ -32,6 +32,7 @@
 @code {
     private MudForm? form;
     private LoginModel loginModel = new();
+    private MudButton? login;
 
     private async Task DoLogin()
     {
@@ -39,9 +40,11 @@
         {
             if (!string.IsNullOrEmpty(loginModel.Email) && !string.IsNullOrEmpty(loginModel.Password))
             {
+                login.Disabled = true;
                 var auth = await Auth.LoginAsync(loginModel.Email, loginModel.Password);
-                if (auth)
+                if (auth) 
                     Navigation.NavigateTo("/");
+                login.Disabled = false;
             }
         }
     }

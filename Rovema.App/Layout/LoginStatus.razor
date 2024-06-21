@@ -1,0 +1,35 @@
+﻿@inject DirectusAuthStateProvider Auth
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <ActivatorContent>
+                <MudButton Size="Size.Large" Variant="Variant.Text" Color="Color.Inherit">
+                    <MudText Typo="Typo.h5">@avatar</MudText>
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem IconSize="Size.Medium" IconColor="Color.Primary" Icon="@Icons.Material.Outlined.PermIdentity">@firstName @lastName</MudMenuItem>
+                <MudMenuItem IconSize="Size.Medium" IconColor="Color.Primary" Icon="@Icons.Material.Outlined.Logout" OnClick="DoLogout">Logout</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string? firstName => Auth.CurrentUser?.FirstName;
+    private string? lastName => Auth.CurrentUser?.LastName;
+
+    private string? avatar => firstName?.Substring(0, 1).ToUpper() + lastName?.Substring(0, 1).ToUpper();
+
+    private async Task DoLogout()
+    {
+        await Auth.LogoutAsync();
+        Navigation.NavigateTo("/login");
+     }
+
+}

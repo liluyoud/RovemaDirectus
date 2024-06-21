@@ -3,22 +3,36 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider Auth
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
-@* <MudPopoverProvider/> *@
-@* <MudDialogProvider/>
-<MudSnackbarProvider/> *@
+<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <AuthorizeView>
     <Authorized>
         <MudLayout>
-            <MudAppBar Elevation="1">
-                <MudText Typo="Typo.h5" Class="ml-3">Rovema PME</MudText>
+            <MudAppBar Elevation="0">
+                <MudToggleIconButton @bind-Toggled="@_isNavOpen" Edge="Edge.Start"
+                                     Icon="@Icons.Material.Filled.Menu" Title="Mostrar Menu" Color="Color.Inherit"
+                                     ToggledIcon="@Icons.Material.Filled.MenuOpen" ToggledTitle="Esconder Menu" ToggledColor="Color.Inherit" />
+                <MudSpacer />
+
+                <MudToggleIconButton @bind-Toggled="@_isDarkMode"
+                                     Icon="@Icons.Material.Filled.DarkMode" Title="Modo Escuro" Color="Color.Inherit"
+                                     ToggledIcon="@Icons.Material.Filled.LightMode" ToggledTitle="Modo Claro" ToggledColor="Color.Inherit" />
+                <LoginStatus />
             </MudAppBar>
-            <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+
+            <MudDrawer @bind-Open="_isNavOpen" Elevation="1">
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h6">Rovema PME</MudText>
+                </MudDrawerHeader>
                 <NavMenu />
             </MudDrawer>
-            <MudMainContent Class="mt-16 pa-4">
-                @Body
+
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-4 pt-4">
+                    @Body
+                </MudContainer>
             </MudMainContent>
         </MudLayout>
     </Authorized>
@@ -27,15 +41,16 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
 @code {
+
+    bool _isNavOpen = true;
     private bool _isDarkMode;
+
     private MudThemeProvider? _mudThemeProvider;
-    private bool _drawerOpen = true;
 
     private void DrawerToggle()
     {
-        _drawerOpen = !_drawerOpen;
+        _isNavOpen = !_isNavOpen;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
