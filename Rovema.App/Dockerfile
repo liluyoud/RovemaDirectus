@@ -5,11 +5,14 @@ COPY Rovema.App/Rovema.App.csproj ./Rovema.App/
 RUN dotnet restore Rovema.App/Rovema.App.csproj
 
 COPY . .
+WORKDIR /app/Rovema.App"
+RUN dotnet build "./Rovema.App.csproj" -c Release -o /app/build
+FROM build AS publish
 RUN dotnet publish "./Rovema.App.csproj" -c Release -o /app/publish
 
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
-COPY --from=publish /app/publish /usr/share/nginx/html
+COPY --from=publish /app/publish .
 
 FROM nginx:alpine
 WORKDIR /app
