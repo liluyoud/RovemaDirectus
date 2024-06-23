@@ -12,7 +12,7 @@ RUN dotnet publish "./Rovema.App.csproj" -c Release -o /app/publish
 
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
-COPY --from=build /app/publish/wwwroot .
+COPY --from=publish /app/publish .
 COPY Rovema.App/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
