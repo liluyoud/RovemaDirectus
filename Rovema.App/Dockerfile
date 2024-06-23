@@ -12,7 +12,7 @@ RUN rm -rf ./*
 COPY --from=publish /app/publish /usr/share/nginx/html
 
 FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /app
+COPY Rovema.App/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
