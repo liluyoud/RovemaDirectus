@@ -11,8 +11,7 @@ FROM build AS publish
 RUN dotnet publish "./Rovema.App.csproj" -c Release -o /app/publish
 
 WORKDIR /usr/share/nginx/html
-RUN rm -rf ./*
-COPY --from=build /app/publish .
+COPY --from=build /app/publish/wwwroot .
 
 FROM nginx:alpine
 WORKDIR /app
