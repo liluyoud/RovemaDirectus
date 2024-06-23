@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Api", "Rovema.Api\Rovema.Api.csproj", "{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Shared", "Rovema.Shared\Rovema.Shared.csproj", "{F600A6A7-BE90-41B7-AB47-95E5096B1E38}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Coravel", "Rovema.Coravel\Rovema.Coravel.csproj", "{8CB9E102-6DA1-4A53-8994-A9F447D52E68}"
@@ -15,13 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dclt.Services", "..\Shared\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dclt.Shared", "..\Shared\Dclt.Shared\Dclt.Shared.csproj", "{6AE82D2D-BB62-4778-8974-C6A65262786F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.App", "Rovema.App\Rovema.App.csproj", "{10D9D903-D81F-4ABA-AB90-F7D966BC3448}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{BBE8E659-5B44-4F2D-A94F-6B1980EF2CE2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A91F09F5-682A-41BA-BB69-F17D1EC147DE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Back", "Back", "{7A050B09-E68D-4466-863F-039859C9D7EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.App", "Rovema.App\Rovema.App.csproj", "{3131B795-3F54-4533-94C7-86BDA28665B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F600A6A7-BE90-41B7-AB47-95E5096B1E38}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,22 +43,18 @@ Global
 		{6AE82D2D-BB62-4778-8974-C6A65262786F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AE82D2D-BB62-4778-8974-C6A65262786F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AE82D2D-BB62-4778-8974-C6A65262786F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10D9D903-D81F-4ABA-AB90-F7D966BC3448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10D9D903-D81F-4ABA-AB90-F7D966BC3448}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10D9D903-D81F-4ABA-AB90-F7D966BC3448}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10D9D903-D81F-4ABA-AB90-F7D966BC3448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3131B795-3F54-4533-94C7-86BDA28665B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3131B795-3F54-4533-94C7-86BDA28665B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3131B795-3F54-4533-94C7-86BDA28665B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3131B795-3F54-4533-94C7-86BDA28665B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{9369185B-4AAA-4DED-BFFD-9A89C859DF1E} = {7A050B09-E68D-4466-863F-039859C9D7EB}
-		{F600A6A7-BE90-41B7-AB47-95E5096B1E38} = {7A050B09-E68D-4466-863F-039859C9D7EB}
-		{8CB9E102-6DA1-4A53-8994-A9F447D52E68} = {7A050B09-E68D-4466-863F-039859C9D7EB}
 		{C094774A-1DF6-4AFE-9ADE-195619951E8C} = {A91F09F5-682A-41BA-BB69-F17D1EC147DE}
 		{E9AF28DF-B085-49D6-B369-A2CD72E70426} = {A91F09F5-682A-41BA-BB69-F17D1EC147DE}
 		{6AE82D2D-BB62-4778-8974-C6A65262786F} = {A91F09F5-682A-41BA-BB69-F17D1EC147DE}
-		{10D9D903-D81F-4ABA-AB90-F7D966BC3448} = {BBE8E659-5B44-4F2D-A94F-6B1980EF2CE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0CC0C556-8EF7-42EA-B58E-964DA12FE794}
