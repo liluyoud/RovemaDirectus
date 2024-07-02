@@ -47,16 +47,14 @@ public class IonJob(ILogger<IonJob> logger, DirectusService directusService, Rea
         {
             try
             {
-                //var ionRead = await rovema.GetIonAsync(address, reverse);
                 var ionRead = await readService.GetIonAsync(address, reverse);
 
                 if (ionRead != null)
                 {
                     var readIon = ionRead.ToCreateReadIon(rpa.Id, type);
                     await directusService.CreateItemAsync("reads_ion", readIon);
+                    logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - IonJob {rpa.Name} executado");
                 }
-                logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - IonJob {rpa.Name} executado");
-
             }
             catch (Exception ex) 
             {

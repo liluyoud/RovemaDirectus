@@ -13,8 +13,8 @@ public class InverterJob(ILogger<InverterJob> logger, DirectusService directusSe
     public async Task Invoke()
     {
         var query = new DirectusQuery()
-                   .Fields("name,type,settings,date_created")
-                   .Filter("type", Operation.Equal, "Inverter")
+                   .Fields("id,name,type,settings,date_created")
+                   .Filter("type", Operation.Equal, "Inversor")
                    .Filter("status", Operation.Equal, "published")
                    .Build();
 
@@ -93,6 +93,11 @@ public class InverterJob(ILogger<InverterJob> logger, DirectusService directusSe
 
                 await directusService.CreateItemAsync("reads_inverter", readInverter);
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
+            } 
+            else
+            {
+                // try to refresh page
+                await page.ReloadAsync();
             }
         }
 
@@ -154,6 +159,11 @@ public class InverterJob(ILogger<InverterJob> logger, DirectusService directusSe
             {
                 await directusService.CreateItemAsync("reads_inverter", readInverter);
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - InverterJob {rpa.Name} executado");
+            } 
+            else
+            {
+                // trye to refresh page
+                await page.ReloadAsync();
             }
         }
 

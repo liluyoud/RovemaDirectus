@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solarimétrica Buritis</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>RPA Solarimétrica - Buritis</h1>
+        <hr>
+        <table class="table table-striped">
+            <thead>
+                <th>Campo</th>
+                <th>Valor</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data e Hora</td>
+                    <td><span id="readAt">25/02/2021 17:15:00</span></td>
+                </tr>
+                <tr>
+                    <td>Registro</td>
+                    <td><span id="record">121212</span></td>
+                </tr>
+                <tr>
+                    <td>GHI 1 Horizontal</td>
+                    <td><span id="ghi1Horizontal">181,3045</span> W/m^2</td>
+                </tr>
+                <tr>
+                    <td>GHI 2 Inclinado</td>
+                    <td><span id="ghi2Inclinado">NAN</span> W/m^2</td>
+                </tr>
+                <tr>
+                    <td>GHI 1 Horizontal Total</td>
+                    <td><span id="ghi1HorizontalTotal">5,00475</span> kW/m^2</td>
+                </tr>
+                <tr>
+                    <td>GHI 2 Inclinado Total</td>
+                    <td><span id="ghi2InclinadoTotal">NAN</span> kW/m^2</td>
+                </tr>
+                <tr>
+                    <td>Temperatura do Ar</td>
+                    <td><span id="tempAir">32,76</span> C</td>
+                </tr>
+                <tr>
+                    <td>Temperatura do Módulo</td>
+                    <td><span id="tempModule">42,19</span> C</td>
+                </tr>
+                <tr>
+                    <td>Temperatura Interna</td>
+                    <td><span id="tempInternal">40,19</span> C</td>
+                </tr>
+                <tr>
+                    <td>Umidade Relativa do Ar</td>
+                    <td><span id="ruAir">60,67</span> %</td>
+                </tr>
+                <tr>
+                    <td>Velocidade do Vento</td>
+                    <td><span id="windSpeed">0,49</span> m/s</td>
+                </tr>
+                <tr>
+                    <td>Bateria</td>
+                    <td><span id="batt">13,22</span> V</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+        let apiHost = "https://localhost:4101";
+        if (getParameterByName("env") == "dev") {
+            apiHost = "https://localhost:5101"
+        }
+
+        let socket = new WebSocket("ws://172.16.21.30/tables.html", [ "com.campbellsci.webdata" ]);
+
+        let count = 0;
+
+        var message = {
+            message: "AddRequests",
+            requests: [
+                {
+                    uri: "dl:Dados",
+                    mode: "most-recent",
+                    p1: "1",
+                    p2: "0",
+                    order: "real-time",
+                    transaction: 4
+                }
+            ]
+        };
+
+        socket.onopen = function(e) {
+            console.log("[open] Connection established");
+            console.log("Sending to server");
+            socket.send(JSON.stringify(message));
+        };
+
+        socket.onmessage = function(event) {
+            console.log(`[message] Data received from server: ${event.data}`);
+            saveSolar(event.data);
+        };
+
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            } else {
+                console.log('[close] Connection died');
+            }
+            setTimeout("location.reload(true);", 10000);
+        };
+
+        socket.onerror = function(error) {
+            console.log(`[error] ${error.message}`);
+        };
+
+        function saveSolar(jsonData) {
+            var obj = JSON.parse(jsonData);
+            if (obj.message == "RequestRecords") {
+                let readAt = obj.records.data[0].time;
+                let record = obj.records.data[0].no;
+                let pir1 = obj.records.data[0].vals[3];
+                let pir2 = obj.records.data[0].vals[4];
+                let pir3 = obj.records.data[0].vals[5];
+                let pir4 = obj.records.data[0].vals[6];
+                let tempAir = obj.records.data[0].vals[7];
+                let tempModule = obj.records.data[0].vals[8];
+                let tempInternal = obj.records.data[0].vals[1];
+                let humidity = obj.records.data[0].vals[2];
+                let windSpeed = obj.records.data[0].vals[9];
+                let batt = obj.records.data[0].vals[0];
+
+                let solar = {
+                    rpa_id: '12',
+                    weather_id: '17',
+                    pir1: formatNAN(pir2),
+                    pir2: formatNAN(pir1),
+                    pir3: formatNAN(pir3),
+                    pir4: formatNAN(pir4),
+                    temp_air: formatNAN(tempAir),
+                    temp_module: formatNAN(tempModule),
+                    temp_internal: formatNAN(tempInternal),
+                    humidity: formatNAN(humidity),
+                    wind_speed: formatNAN(windSpeed)
+                };
+
+                let solarJson = JSON.stringify(solar);
+
+                $.ajax({
+                    type: 'POST',
+                    url: apiHost + '/reads/solar',
+                    data: solarJson,
+                    contentType: "application/json",
+                    dataType: 'json'
+                });
+
+                $('#readAt').html(readAt);
+                $('#record').html(record);
+                $('#ghi1Horizontal').html(pir1);
+                $('#ghi2Inclinado').html(pir2);
+                $('#ghi1HorizontalTotal').html(pir3);
+                $('#ghi2InclinadoTotal').html(pir4);
+                $('#tempAir').html(tempAir);
+                $('#tempModule').html(tempModule);
+                $('#tempInternal').html(tempInternal);
+                $('#ruAir').html(humidity);
+                $('#windSpeed').html(windSpeed);
+                $('#batt').html(batt);
+            }
+        }
+
+        function formatNAN(value) {
+            if (value == "NAN") {
+                return null;
+            } else {
+                return value;
+            }
+
+        }
+
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+    </script>
+</body>
+</html>

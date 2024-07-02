@@ -17,6 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A91F09
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.App", "Rovema.App\Rovema.App.csproj", "{3131B795-3F54-4533-94C7-86BDA28665B0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{AF3E3762-2DD7-443E-B1AE-53B5BFD918F8}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\SolarBuritisJob.html = Docs\SolarBuritisJob.html
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rovema.Api", "Rovema.Api\Rovema.Api.csproj", "{9830DB0E-ECE3-4820-80AA-D35413E0B76F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +54,10 @@ Global
 		{3131B795-3F54-4533-94C7-86BDA28665B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3131B795-3F54-4533-94C7-86BDA28665B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3131B795-3F54-4533-94C7-86BDA28665B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9830DB0E-ECE3-4820-80AA-D35413E0B76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9830DB0E-ECE3-4820-80AA-D35413E0B76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9830DB0E-ECE3-4820-80AA-D35413E0B76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9830DB0E-ECE3-4820-80AA-D35413E0B76F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

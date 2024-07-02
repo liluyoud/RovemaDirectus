@@ -16,12 +16,6 @@ public class ReadService(ILogger<ReadService> logger)
             var url = $"http://{address}/Operation.html";
             var web = new HtmlWeb();
 
-            web.PreRequest = delegate (HttpWebRequest webRequest)
-            {
-                webRequest.Timeout = 20000;
-                return true;
-            };
-
             var html = await web.LoadFromWebAsync(url);
 
             var str_Power_KW_Total = html.DocumentNode.SelectSingleNode("/html[1]/body[1]/table[1]/tr[3]/td[8]").InnerText;

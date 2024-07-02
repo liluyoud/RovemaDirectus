@@ -13,7 +13,7 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
     {
         var query = new DirectusQuery()
             .Fields("id,name,type,settings")
-            .Filter("type", Operation.Equal, "Solarimetrica")
+            .Filter("type", Operation.Equal, "Solar")
             .Filter("status", Operation.Equal, "published")
             .Build();
 
@@ -35,16 +35,35 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
         if (!string.IsNullOrEmpty(address))
         {
             try {
-
-                //var solarData = await apiService.GetSolarAsync(address);
                 var solarData = await readService.GetSolarAsync(address);
                 if (solarData != null)
                 {
                     CreateReadSolar readSolar = solarData.ToCreateReadSolar(rpa);
-                    var panels = await GetPanels(rpa.Id);
-                    var weather = await GetWeather(readSolar.WeatherId);
+                    var panels = await directusService.GetPanels(rpa.Id);
+                    var weather = await directusService.GetWeather(readSolar.WeatherId);
                     readSolar.BuildTeoricPower(panels, weather);
                     await directusService.CreateItemAsync("reads_solar", readSolar);
+
+                    if (rpa.Id == 15) // pvh 1 -> create pvh 2
+                    {
+                        readSolar.RpaId = 24; // pvh 2
+                        panels = await directusService.GetPanels(24); // pvh 2
+                        readSolar.BuildTeoricPower(panels, weather);
+                        await directusService.CreateItemAsync("reads_solar", readSolar);
+                    }
+
+                    if (rpa.Id == 14) // mac 1 -> mac 2 and mac 3
+                    {
+                        readSolar.RpaId = 22; // mac 2
+                        panels = await directusService.GetPanels(22); // pvh 2
+                        readSolar.BuildTeoricPower(panels, weather);
+                        await directusService.CreateItemAsync("reads_solar", readSolar);
+
+                        readSolar.RpaId = 23; // mac 3
+                        panels = await directusService.GetPanels(23); // pvh 3
+                        readSolar.BuildTeoricPower(panels, weather);
+                        await directusService.CreateItemAsync("reads_solar", readSolar);
+                    }
                 }
                 logger.LogInformation($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - SolarJob {rpa.Name} executado");
             }
@@ -54,26 +73,5 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
             }
 
         }
-    }
-
-    private async Task<IEnumerable<SolarPanelModel>?> GetPanels(int rpaId)
-    {
-        var query = new DirectusQuery()
-            .Filter("rpa_id", Operation.Equal, rpaId)
-            .Filter("status", Operation.Equal, "published")
-            .Build();
-        return await directusService.GetItemsAsync<IEnumerable<SolarPanelModel>>("solar_panels", query);
-    }
-
-    private async Task<ReadWeatherModel?> GetWeather(int? rpaId)
-    {
-        if (rpaId == null) return null;
-        var query = new DirectusQuery()
-            .Filter("rpa_id", Operation.Equal, rpaId)
-            .Sort("-date_created")
-            .Limit(1)
-            .Build();
-        var weather = await directusService.GetItemsAsync<IEnumerable<ReadWeatherModel>>("reads_weather", query);
-        return weather?.First();
     }
 }

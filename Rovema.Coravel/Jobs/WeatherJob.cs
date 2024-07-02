@@ -13,7 +13,7 @@ public class WeatherJob (ILogger<WeatherJob> logger, DirectusService directusSer
     {
         var query = new DirectusQuery()
             .Fields("id,name,type,settings")
-            .Filter("type", Operation.Equal, "Tempo")
+            .Filter("type", Operation.Equal, "Clima")
             .Filter("status", Operation.Equal, "published")
             .Build();
 
