@@ -40,7 +40,7 @@ public class SolarJob(ILogger<SolarJob> logger, DirectusService directusService,
                 {
                     CreateReadSolar readSolar = solarData.ToCreateReadSolar(rpa);
                     var panels = await directusService.GetPanels(rpa.Id);
-                    var weather = await directusService.GetWeather(readSolar.WeatherId);
+                    var weather = readSolar.WeatherId != null ? await directusService.GetCache<ReadWeatherModel>(readSolar.WeatherId.Value) : null; 
                     readSolar.BuildTeoricPower(panels, weather);
                     await directusService.CreateItemAsync("reads_solar", readSolar);
 

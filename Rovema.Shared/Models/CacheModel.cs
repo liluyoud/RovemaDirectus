@@ -5,10 +5,10 @@ namespace Rovema.Shared.Contracts;
 public class CacheModel<T>
 {
     [JsonPropertyName("id")]
-    public double? Id { get; set; }
+    public long? Id { get; set; }
 
-    [JsonPropertyName("read_at")]
-    public double? ReadAt { get; set; }
+    [JsonPropertyName("updated_at")]
+    public DateTime? UpdatedAt { get; set; }
 
     [JsonPropertyName("data")]
     public T? Data { get; set; }

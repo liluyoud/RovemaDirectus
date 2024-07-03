@@ -37,7 +37,6 @@ if (app.Environment.IsDevelopment() || showSwagger == "true")
 }
 
 app.UseCors();
-app.UseHttpsRedirection();
 app.MapRpasEndpoints();
 app.Run();
 
