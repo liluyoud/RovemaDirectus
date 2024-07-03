@@ -22,4 +22,12 @@ public static class DirectusExtension
             return cache.Data;
         return default;
     }
+
+    public static async Task<string?> GetCache(this DirectusService service, long rpaId)
+    {
+        var cache = await service.GetItemAsync<CacheModel>("cache", rpaId);
+        if (cache != null && cache.Data != null)
+            return cache.Data;
+        return default;
+    }
 }

@@ -58,7 +58,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         var query = new DirectusQuery()
-                   .Fields("id,name,type")
+                   .Fields("id,name,type,refresh,timeout")
                    .Filter("status", Operation.NotEqual, "archived")
                    .Sort("type,name")
                    .Build();

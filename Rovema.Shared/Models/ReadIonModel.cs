@@ -7,14 +7,13 @@ public class ReadIonModel
     public long Id { get; set; }
 
     [JsonPropertyName("rpa_id")]
-    public int? RpaId { get; set; }
+    public int RpaId { get; set; }
 
     [JsonPropertyName("date_created")]
-    public DateTime? ReadAt { get; set; }
+    public DateTime ReadAt { get; set; }
 
     [JsonPropertyName("type")]
     public string? Type { get; set; }
-
 
     [JsonPropertyName("power_kw_total")]
     public double? Power_KW_Total { get; set; }

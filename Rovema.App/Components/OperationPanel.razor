@@ -18,82 +18,92 @@
 
 @code {
     [Parameter, EditorRequired]
-    public RpaModel Rpa { get; set; }
+    public required RpaModel Rpa { get; set; }
 
-
-    private Color color = Color.Success;
+    private Color color = Color.Error;
     private string? avatar;
     private string? name;
     private string? value;
     private string? updated;
+    private string? cache;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Rpa?.Type == "Ion")
+        if (Rpa.Type == "Ion")
         {
             avatar = Icons.Material.Filled.AutoMode;
-            name = Rpa?.Name.Replace(" Ion", "");
+            name = Rpa.Name.Replace(" Ion", "");
         }
-        else if (Rpa?.Type == "Inversor")
+        else if (Rpa.Type == "Inversor")
         {
             avatar = @Icons.Material.Outlined.EnergySavingsLeaf;
             name = Rpa?.Name.Replace(" Inversor", "");
         }
-        else if (Rpa?.Type == "Solar")
+        else if (Rpa.Type == "Solar")
         {
             avatar = @Icons.Material.Outlined.WbSunny;
-            name = Rpa?.Name.Replace(" Solar", "");
+            name = Rpa.Name.Replace(" Solar", "");
         }
-        else if (Rpa?.Type == "Clima")
+        else if (Rpa.Type == "Clima")
         {
             avatar = @Icons.Material.Outlined.Cloud;
-            name = Rpa?.Name.Replace(" Clima", "");
+            name = Rpa.Name.Replace(" Clima", "");
         }
         await UpdateData();
     }
 
-    async Task UpdateData()
+    void UpdatePanel(double? value, DateTime? updated, string format, string pos)
     {
-        if (Rpa?.Type == "Ion")
+        if (value != null && updated != null)
         {
-            var cache = await directus.GetCache<ReadIonModel>(Rpa.Id);
-            if (cache != null)
+            this.value = value.Value.ToString(format) + " " + pos;
+            this.updated = updated.Value.ToString("HH:mm");
+            var diff = DateTime.Now - updated;
+            if (diff.Value.TotalMinutes > Rpa.Timeout)
             {
-                value = cache.Power_KW_Total.ToString() + " kW";
-                var readAt = cache.ReadAt;
-                if (readAt != null)
+                color = Color.Error;
+                if (DateTime.Now.Date != updated.Value.Date)
                 {
-                    updated = cache.ReadAt!.Value.ToString("HH:mm");
-                    var now = DateTime.Now;
-                    var diff = now - readAt;
-                    if (diff.Value.TotalMinutes > Rpa.Timeout)
-                    {
-                        color = Color.Error;
-                        if (diff.Value.TotalDays >= 1)
-                        {
-                            updated = cache.ReadAt!.Value.ToString("dd/MM");
-                        }
-                    }
+                    this.updated = updated.Value.ToString("dd/MM");
                 }
             }
+            else
+            {
+                color = Color.Success;
+            }
         }
-        else if (Rpa?.Type == "Inversor")
+        else
         {
-            value = "1.100 Kw";
-            updated = "15:45";
-        }
-        else if (Rpa?.Type == "Solar")
-        {
-            value = "1.100 Kw";
-            updated = "15:45";
-        }
-        else if (Rpa?.Type == "Clima")
-        {
-            value = "1.100 Kw";
-            updated = "15:45";
+            color = Color.Error;
         }
         StateHasChanged();
-        await Task.Delay(60000);
+    }
+
+    async Task UpdateData()
+    {
+        cache = await directus.GetCache(Rpa.Id);
+
+        if (Rpa.Type == "Ion")
+        {
+            var cache = await directus.GetCache<ReadIonModel>(Rpa.Id);
+            UpdatePanel(cache?.Power_KW_Total, cache?.ReadAt, "N2", "kW");
+        }
+        else if (Rpa.Type == "Inversor")
+        {
+            var cache = await directus.GetCache<ReadInverterModel>(Rpa.Id);
+            UpdatePanel(cache?.Current, cache?.ReadAt, "N2", "kW");
+        }
+        else if (Rpa.Type == "Solar")
+        {
+            var cache = await directus.GetCache<ReadSolarModel>(Rpa.Id);
+            UpdatePanel(cache?.Power1, cache?.ReadAt, "N2", "kW");
+        }
+        else if (Rpa.Type == "Clima")
+        {
+            var cache = await directus.GetCache<ReadWeatherModel>(Rpa.Id);
+            UpdatePanel(cache?.TempC, cache?.ReadAt, "N1", "ºC");
+        }
+        await Task.Delay(Rpa.Refresh * 60000);
         await UpdateData();
     }
 }
