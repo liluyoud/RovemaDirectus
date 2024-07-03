@@ -1,0 +1,99 @@
+﻿@inject DirectusService directus
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudIcon Color="@color" Icon="@avatar" Size="Size.Large" />
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">@name</MudText>
+            <span style="color: var(--mud-palette-info);">@value</span>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <small>@updated</small>
+        </CardHeaderActions>
+    </MudCardHeader>
+</MudCard>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public RpaModel Rpa { get; set; }
+
+
+    private Color color = Color.Success;
+    private string? avatar;
+    private string? name;
+    private string? value;
+    private string? updated;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Rpa?.Type == "Ion")
+        {
+            avatar = Icons.Material.Filled.AutoMode;
+            name = Rpa?.Name.Replace(" Ion", "");
+        }
+        else if (Rpa?.Type == "Inversor")
+        {
+            avatar = @Icons.Material.Outlined.EnergySavingsLeaf;
+            name = Rpa?.Name.Replace(" Inversor", "");
+        }
+        else if (Rpa?.Type == "Solar")
+        {
+            avatar = @Icons.Material.Outlined.WbSunny;
+            name = Rpa?.Name.Replace(" Solar", "");
+        }
+        else if (Rpa?.Type == "Clima")
+        {
+            avatar = @Icons.Material.Outlined.Cloud;
+            name = Rpa?.Name.Replace(" Clima", "");
+        }
+        await UpdateData();
+    }
+
+    async Task UpdateData()
+    {
+        if (Rpa?.Type == "Ion")
+        {
+            var cache = await directus.GetCache<ReadIonModel>(Rpa.Id);
+            if (cache != null)
+            {
+                value = cache.Power_KW_Total.ToString() + " kW";
+                var readAt = cache.ReadAt;
+                if (readAt != null)
+                {
+                    updated = cache.ReadAt!.Value.ToString("HH:mm");
+                    var now = DateTime.Now;
+                    var diff = now - readAt;
+                    if (diff.Value.TotalMinutes > Rpa.Timeout)
+                    {
+                        color = Color.Error;
+                        if (diff.Value.TotalDays >= 1)
+                        {
+                            updated = cache.ReadAt!.Value.ToString("dd/MM");
+                        }
+                    }
+                }
+            }
+        }
+        else if (Rpa?.Type == "Inversor")
+        {
+            value = "1.100 Kw";
+            updated = "15:45";
+        }
+        else if (Rpa?.Type == "Solar")
+        {
+            value = "1.100 Kw";
+            updated = "15:45";
+        }
+        else if (Rpa?.Type == "Clima")
+        {
+            value = "1.100 Kw";
+            updated = "15:45";
+        }
+        StateHasChanged();
+        await Task.Delay(60000);
+        await UpdateData();
+    }
+}

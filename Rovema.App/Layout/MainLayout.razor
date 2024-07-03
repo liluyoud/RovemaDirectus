@@ -3,7 +3,7 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider Auth
 
-<MudThemeProvider @ref="@_mudThemeProvider" IsDarkMode="@_isDarkMode" />
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -11,14 +11,9 @@
     <Authorized>
         <MudLayout>
             <MudAppBar Elevation="0">
-                <MudToggleIconButton @bind-Toggled="@_isNavOpen" Edge="Edge.Start"
-                                     Icon="@Icons.Material.Filled.Menu" Title="Mostrar Menu" Color="Color.Inherit"
-                                     ToggledIcon="@Icons.Material.Filled.MenuOpen" ToggledTitle="Esconder Menu" ToggledColor="Color.Inherit" />
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="NavToggle" />
                 <MudSpacer />
-
-                <MudToggleIconButton @bind-Toggled="@_isDarkMode"
-                                     Icon="@Icons.Material.Filled.DarkMode" Title="Modo Escuro" Color="Color.Inherit"
-                                     ToggledIcon="@Icons.Material.Filled.LightMode" ToggledTitle="Modo Claro" ToggledColor="Color.Inherit" />
+                <MudIconButton Icon="@DarkLightIcon" title="@DarkLightTitle" OnClick="DarkModeToggle" />
                 <LoginStatus />
             </MudAppBar>
 
@@ -42,31 +37,42 @@
 </AuthorizeView>
 
 @code {
+    private bool _isNavOpen = true;
+    private bool _isDarkMode = true;
+    private MudTheme? _theme = null;
 
-    bool _isNavOpen = true;
-    private bool _isDarkMode;
+    public Palette CurrentPalette => _isDarkMode ? LayoutHelper.DarkPalette : LayoutHelper.LightPalette;
 
-    private MudThemeProvider? _mudThemeProvider;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
-    private void DrawerToggle()
+        _theme = new() {
+            PaletteLight = LayoutHelper.LightPalette,
+            PaletteDark = LayoutHelper.DarkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
+    }
+
+    private void NavToggle()
     {
         _isNavOpen = !_isNavOpen;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void DarkModeToggle()
     {
-        if (firstRender && _mudThemeProvider is not null)
-        {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-            StateHasChanged();
-        }
+        _isDarkMode = !_isDarkMode;
     }
 
-    private Task OnSystemPreferenceChanged(bool newValue)
+    public string DarkLightIcon => _isDarkMode switch
     {
-        _isDarkMode = newValue;
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
+        true => Icons.Material.Rounded.LightMode,
+        false => Icons.Material.Rounded.DarkMode,
+    };
+
+    public string DarkLightTitle => _isDarkMode switch
+    {
+        true => "Modo Claro",
+        false => "Modo Escuro",
+    };
 }

@@ -1,29 +1,24 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+
 
 <MudLayout>
-        @Body
+    @Body
 </MudLayout>
 
 @code {
-    private bool _isDarkMode;
-    private MudThemeProvider? _mudThemeProvider;
+    private bool _isDarkMode = true;
+    private MudTheme? _theme = null;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender && _mudThemeProvider is not null)
-        {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-            StateHasChanged();
-        }
-    }
+        base.OnInitialized();
 
-    private Task OnSystemPreferenceChanged(bool newValue)
-    {
-        _isDarkMode = newValue;
-        StateHasChanged();
-        return Task.CompletedTask;
+        _theme = new() {
+            PaletteLight = LayoutHelper.LightPalette,
+            PaletteDark = LayoutHelper.DarkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
     }
 }

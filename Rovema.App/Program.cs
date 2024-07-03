@@ -21,12 +21,9 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddAuthorizationCore();
 builder.Services.AddHttpClient();
 
-builder.Services.AddBlazoredLocalStorage(config =>
-        config.JsonSerializerOptions.WriteIndented = true);
+builder.Services.AddBlazoredLocalStorage(config => config.JsonSerializerOptions.WriteIndented = true);
 builder.Services.AddScoped<DirectusAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
-    provider.GetRequiredService<DirectusAuthStateProvider>());
-
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<DirectusAuthStateProvider>());
 builder.Services.AddScoped<DirectusService>();
 
 builder.Services.AddMudServices();

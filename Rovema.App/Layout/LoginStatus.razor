@@ -3,17 +3,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
-            <ActivatorContent>
-                <MudButton Size="Size.Large" Variant="Variant.Text" Color="Color.Inherit">
-                    <MudText Typo="Typo.h5">@avatar</MudText>
-                </MudButton>
-            </ActivatorContent>
-            <ChildContent>
-                <MudMenuItem IconSize="Size.Medium" IconColor="Color.Primary" Icon="@Icons.Material.Outlined.PermIdentity">@firstName @lastName</MudMenuItem>
-                <MudMenuItem IconSize="Size.Medium" IconColor="Color.Primary" Icon="@Icons.Material.Outlined.Logout" OnClick="DoLogout">Logout</MudMenuItem>
-            </ChildContent>
-        </MudMenu>
+        <MudIconButton Icon="@Icons.Material.Filled.Logout" title="Sair do Sistema" OnClick="DoLogout" />
     </Authorized>
     <NotAuthorized>
 

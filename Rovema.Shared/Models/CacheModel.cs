@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Rovema.Shared.Contracts;
+namespace Rovema.Shared.Models;
 
 public class CacheModel<T>
 {
