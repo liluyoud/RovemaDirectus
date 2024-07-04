@@ -1,12 +1,43 @@
 ﻿@page "/rpadetails/{Id:int}"
+@inject DirectusService directus
+
+<PageTitle>Rpa - Leituras</PageTitle>
 
 <h1>
    Detalhe
 </h1>
-<p>RPA: @Id</p>
+<MudTable Items="@reads" Hover="true" SortLabel="Ordenar por">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.ReadAt)">Lido em</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KW_Total)">Potência</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVAR_Total)">KVar</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVA_Total)">KVa</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Current_I_AVG)">Corrente</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.ReadAt</MudTd>
+        <MudTd DataLabel="Sign">@context.Power_KW_Total</MudTd>
+        <MudTd DataLabel="Name">@context.Power_KVAR_Total</MudTd>
+        <MudTd DataLabel="Position">@context.Power_KVA_Total</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Current_I_AVG</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 25, 50, 100 }" />
+    </PagerContent>
+</MudTable>
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
+    private IEnumerable<ReadIonModel>? reads;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var query = new DirectusQuery()
+                 .Filter("rpa_id", Operation.Equal, Id)
+                 .Sort("-date_created")
+                 .Build();
+        reads = await directus.GetItemsAsync<List<ReadIonModel>>("reads_ion", query);
+    }
 }
