@@ -1,19 +1,21 @@
 ﻿@inject DirectusService directus
 
-<MudCard>
-    <MudCardHeader>
-        <CardHeaderAvatar>
-            <MudIcon Color="@color" Icon="@avatar" Size="Size.Large" />
-        </CardHeaderAvatar>
-        <CardHeaderContent>
-            <MudText Typo="Typo.body1">@name</MudText>
-            <span style="color: var(--mud-palette-info);">@value</span>
-        </CardHeaderContent>
-        <CardHeaderActions>
-            <small>@updated</small>
-        </CardHeaderActions>
-    </MudCardHeader>
-</MudCard>
+<MudLink Href="@link">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudIcon Color="@color" Icon="@avatar" Size="Size.Large" />
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@name</MudText>
+                <span style="color: var(--mud-palette-info);">@value</span>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <small>@updated</small>
+            </CardHeaderActions>
+        </MudCardHeader>
+    </MudCard>
+</MudLink>
 
 
 @code {
@@ -23,12 +25,13 @@
     private Color color = Color.Error;
     private string? avatar;
     private string? name;
-    private string? value;
-    private string? updated;
-    private string? cache;
+    private string? value = "Offline";
+    private string? updated = "";
+    private string? link = "";
 
     protected override async Task OnParametersSetAsync()
     {
+        link = "/rpadetails/" + Rpa.Id;
         if (Rpa.Type == "Ion")
         {
             avatar = Icons.Material.Filled.AutoMode;
@@ -81,27 +84,35 @@
 
     async Task UpdateData()
     {
-        cache = await directus.GetCache(Rpa.Id);
-
-        if (Rpa.Type == "Ion")
+        try
         {
-            var cache = await directus.GetCache<ReadIonModel>(Rpa.Id);
-            UpdatePanel(cache?.Power_KW_Total, cache?.ReadAt, "N2", "kW");
-        }
-        else if (Rpa.Type == "Inversor")
+            if (Rpa.Type == "Ion")
+            {
+                var cache = await directus.GetCache<ReadIonModel>(Rpa.Id);
+                UpdatePanel(cache?.Power_KW_Total, cache?.ReadAt, "N2", "kW");
+            }
+            else if (Rpa.Type == "Inversor")
+            {
+                var cache = await directus.GetCache<ReadInverterModel>(Rpa.Id);
+                UpdatePanel(cache?.Current, cache?.ReadAt, "N2", "kW");
+            }
+            else if (Rpa.Type == "Solar")
+            {
+                var cache = await directus.GetCache<ReadSolarModel>(Rpa.Id);
+                UpdatePanel(cache?.Power1, cache?.ReadAt, "N2", "kW");
+            }
+            else if (Rpa.Type == "Clima")
+            {
+                var cache = await directus.GetCache<ReadWeatherModel>(Rpa.Id);
+                UpdatePanel(cache?.TempC, cache?.ReadAt, "N1", "ºC");
+            }
+        } 
+        catch
         {
-            var cache = await directus.GetCache<ReadInverterModel>(Rpa.Id);
-            UpdatePanel(cache?.Current, cache?.ReadAt, "N2", "kW");
-        }
-        else if (Rpa.Type == "Solar")
-        {
-            var cache = await directus.GetCache<ReadSolarModel>(Rpa.Id);
-            UpdatePanel(cache?.Power1, cache?.ReadAt, "N2", "kW");
-        }
-        else if (Rpa.Type == "Clima")
-        {
-            var cache = await directus.GetCache<ReadWeatherModel>(Rpa.Id);
-            UpdatePanel(cache?.TempC, cache?.ReadAt, "N1", "ºC");
+            color = Color.Error;
+            value = "Offline";
+            updated = "";
+            StateHasChanged();
         }
         await Task.Delay(Rpa.Refresh * 60000);
         await UpdateData();

@@ -25,15 +25,15 @@ public class ReadWeatherModel
     [JsonPropertyName("feels_c")]
     public double? FeelsC { get; set; }
 
-    public int? Humidity { get; set; }
+    public double? Humidity { get; set; }
 
-    public int? Clouds { get; set; }
+    public double? Clouds { get; set; }
     
     [JsonPropertyName("wind_speed")]
     public double? WindSpeed { get; set; }
 
     [JsonPropertyName("wind_direction")]
-    public int? WindDirection { get; set; }
+    public double? WindDirection { get; set; }
 
-    public int? Visibility { get; set; }
+    public double? Visibility { get; set; }
 }

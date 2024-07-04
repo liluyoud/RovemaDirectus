@@ -1,0 +1,12 @@
+﻿@page "/rpadetails/{Id:int}"
+
+<h1>
+   Detalhe
+</h1>
+<p>RPA: @Id</p>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+}
