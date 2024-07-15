@@ -10,14 +10,14 @@ public class PlayService
 
     private IPlaywright? play;
     private IBrowser? browser;
-    private IPage[]? pages;
+    private List<PageModel> pages = new();
 
     public PlayService(ILogger<PlayService> logger)
     {
-        _logger = logger;   
+        _logger = logger;
     }
 
-    public async Task CreatePages(int length)
+    public async Task CreatePlay()
     {
         if (play == null) // start play and browser
         {
@@ -27,20 +27,38 @@ public class PlayService
                 Headless = false,
                 Channel = "msedge"
             });
-            pages = new IPage[length];
         }
     }
 
     public async Task<IPage> GetPage(int index)
     {
-        if (play == null || browser == null || pages == null) 
-            throw new Exception("You have to call CreatePages first.");
+        if (play == null || browser == null ) 
+            throw new Exception("You have to call CreatePlay first.");
 
-        if (pages[index] == null)
+        var page = pages.FirstOrDefault(p => p.Id == index);
+
+        if (page == null)
         {
-            pages[index] = await browser.NewPageAsync();
+            page = new PageModel()
+            {
+                Id = index,
+                Page = await browser.NewPageAsync()
+            };
+            pages.Add(page);
         }
-
-        return pages[index];
+        else
+        {
+            if (page.Page == null || page.Page.IsClosed)
+            {
+                page.Page = await browser.NewPageAsync();
+            } 
+        }
+        return page.Page;
     }
+}
+
+public class PageModel
+{
+    public int Id { get; set; }
+    public IPage? Page { get; set; }
 }

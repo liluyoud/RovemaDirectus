@@ -9,10 +9,10 @@
 <MudTable Items="@reads" Hover="true" SortLabel="Ordenar por">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.ReadAt)">Lido em</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KW_Total)">Potência</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVAR_Total)">KVar</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVA_Total)">KVa</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Current_I_AVG)">Corrente</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KW_Total ?? 0)">Potência</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVAR_Total ?? 0)">KVar</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Power_KVA_Total ?? 0)">KVa</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<ReadIonModel, object>(x=>x.Current_I_AVG ?? 0)">Corrente</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.ReadAt</MudTd>

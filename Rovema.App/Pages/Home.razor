@@ -13,7 +13,7 @@ else
     <MudGrid Spacing="5" Justify="Justify.FlexStart">
         @foreach (var rpa in rpas.Where(r => r.Type == "Ion"))
         {
-            <MudItem xs="2">
+            <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
                 <OperationPanel Rpa="@rpa"></OperationPanel>
             </MudItem>
         }
@@ -23,7 +23,7 @@ else
     <MudGrid Spacing="5" Justify="Justify.FlexStart">
         @foreach (var rpa in rpas.Where(r => r.Type == "Inversor"))
         {
-            <MudItem xs="2">
+            <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
                 <OperationPanel Rpa="@rpa"></OperationPanel>
             </MudItem>
         }
@@ -33,7 +33,7 @@ else
     <MudGrid Spacing="5" Justify="Justify.FlexStart">
         @foreach (var rpa in rpas.Where(r => r.Type == "Solar"))
         {
-            <MudItem xs="2">
+            <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
                 <OperationPanel Rpa="@rpa"></OperationPanel>
             </MudItem>
         }
@@ -43,7 +43,7 @@ else
     <MudGrid Spacing="5" Justify="Justify.FlexStart">
         @foreach (var rpa in rpas.Where(r => r.Type == "Clima"))
         {
-            <MudItem xs="2">
+            <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
                 <OperationPanel Rpa="@rpa"></OperationPanel>
             </MudItem>
         }
