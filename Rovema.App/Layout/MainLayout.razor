@@ -2,6 +2,8 @@
 
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider Auth
+@inject IJSRuntime Js
+
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudDialogProvider />
@@ -13,6 +15,7 @@
             <MudAppBar Elevation="0">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="NavToggle" />
                 <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" title="Regarregar página" OnClick="ReloadPage" />
                 <MudIconButton Icon="@DarkLightIcon" title="@DarkLightTitle" OnClick="DarkModeToggle" />
                 <LoginStatus />
             </MudAppBar>
@@ -75,4 +78,9 @@
         true => "Modo Claro",
         false => "Modo Escuro",
     };
+
+    private async Task ReloadPage()
+    {
+        await Js.InvokeVoidAsync("reloadPage");
+    }
 }
